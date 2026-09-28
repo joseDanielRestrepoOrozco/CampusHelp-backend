@@ -1,0 +1,27 @@
+import type { Request, Response } from "express";
+import { UserRepository } from "../repositories/user.repository.js";
+import { parseWithSchema } from "../schemas/parse.js";
+import {
+  createUserSchema,
+  userPaginationSchema,
+} from "../schemas/user.schema.js";
+
+export class UserController {
+  constructor(private readonly users: UserRepository) {}
+
+  create = async (request: Request, response: Response): Promise<void> => {
+    const input = parseWithSchema(createUserSchema, request.body, "body");
+    const user = await this.users.create(input);
+    response.status(201).json(user);
+  };
+
+  list = async (request: Request, response: Response): Promise<void> => {
+    const pagination = parseWithSchema(
+      userPaginationSchema,
+      request.query,
+      "query",
+    );
+    const users = await this.users.findAll(pagination);
+    response.json(users);
+  };
+}
