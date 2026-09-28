@@ -13,7 +13,7 @@ January 2026
 
 ## Abstract
 
-Comprehensive schema validation guide for Zod in TypeScript applications, designed for AI agents and LLMs. Contains 43 rules across 8 categories, prioritized by impact from critical (schema definition, parsing) to incremental (performance, bundle optimization). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
+Comprehensive schema validation guide for Zod in TypeScript applications, designed for AI agents and LLMs. Contains 44 rules across 8 categories, prioritized by impact from critical (schema definition, parsing) to incremental (performance, bundle optimization). Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, and specific impact metrics to guide automated refactoring and code generation.
 
 ---
 
@@ -70,6 +70,7 @@ Comprehensive schema validation guide for Zod in TypeScript applications, design
    - 8.3 [Lazy Load Large Schemas](references/perf-lazy-loading.md) — LOW-MEDIUM (Large schemas increase initial bundle and parse time; dynamic imports defer loading until needed)
    - 8.4 [Optimize Large Array Validation](references/perf-arrays.md) — LOW-MEDIUM (Validating 10,000 items takes ~100ms; early exits, sampling, or batching reduce time for large datasets)
    - 8.5 [Use Zod Mini for Bundle-Sensitive Applications](references/perf-zod-mini.md) — LOW-MEDIUM (Full Zod is ~17kb gzipped; Zod Mini is ~1.9kb - 85% smaller for frontend-critical bundles)
+   - 8.6 [Compile Schemas in Hot Paths](references/perf-compile.md) — LOW-MEDIUM (z.compile() returns a compiled clone; up to ~9x faster parse on the docs benchmark, measured 3-4x locally, and only for valid input — failures fall back to the runtime parser)
 
 ---
 
@@ -82,6 +83,7 @@ Comprehensive schema validation guide for Zod in TypeScript applications, design
 5. [https://www.totaltypescript.com/tutorials/zod](https://www.totaltypescript.com/tutorials/zod)
 6. [https://zod.dev/error-handling](https://zod.dev/error-handling)
 7. [https://zod.dev/api](https://zod.dev/api)
+8. [https://zod.dev/compile](https://zod.dev/compile)
 
 ---
 

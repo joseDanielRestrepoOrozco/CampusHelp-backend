@@ -1,5 +1,5 @@
 {
-  "version": "1.1.1",
+  "version": "1.2.0",
   "organization": "community",
   "technology": "Zod",
   "date": "January 2026",
@@ -11,7 +11,8 @@
     "https://zod.dev/packages/mini",
     "https://www.totaltypescript.com/tutorials/zod",
     "https://zod.dev/error-handling",
-    "https://zod.dev/api"
+    "https://zod.dev/api",
+    "https://zod.dev/compile"
   ],
   "categories": [
     {
@@ -60,10 +61,10 @@
       "name": "Performance & Bundle",
       "prefix": "perf",
       "impact": "LOW-MEDIUM",
-      "ruleCount": 5
+      "ruleCount": 6
     }
   ],
-  "totalRules": 43,
+  "totalRules": 44,
   "zodVersion": "4.x",
   "category": "API"
 }

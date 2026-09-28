@@ -68,6 +68,15 @@ export const userRecordSchema = z.object({
   updatedAt: z.string(),
 });
 
+// `z.compile` devuelve un clon con una ruta rápida generada; el esquema original
+// no se modifica y el clon se comporta igual (mismos tipos, issues y mensajes).
+// La compilación es perezosa: el código se genera al primer `parse`, así que solo
+// compila lo que de verdad se valida en cada petición.
+export const compiledCreateUserSchema = z.compile(createUserSchema);
+export const compiledUserPaginationSchema = z.compile(userPaginationSchema);
+
+// `userRecordSchema` no se compila: solo se usa para derivar `UserRecord` y nunca
+// se pasa por `parse`, así que compilarlo no aportaría nada.
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UserPagination = z.infer<typeof userPaginationSchema>;
 export type UserRecord = z.infer<typeof userRecordSchema>;

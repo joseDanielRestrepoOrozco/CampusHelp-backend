@@ -100,6 +100,7 @@ Reference these guidelines when:
 - `perf-avoid-dynamic-creation` - Avoid dynamic schema creation in hot paths
 - `perf-lazy-loading` - Lazy load large schemas
 - `perf-arrays` - Optimize large array validation
+- `perf-compile` - Compile schemas in hot paths with z.compile()
 
 ## How to Use
 
