@@ -1,23 +1,22 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 function optionalText(field: string, maxLength: number) {
   return z
     .preprocess(
-      (value) =>
-        typeof value === "string" && value.trim() === "" ? undefined : value,
+      value => (typeof value === 'string' && value.trim() === '' ? undefined : value),
       z
         .string({ error: `El campo '${field}' debe ser un string` })
         .trim()
         .max(maxLength, `El campo '${field}' no puede superar ${maxLength} caracteres`)
         .optional(),
     )
-    .transform((value) => value ?? null);
+    .transform(value => value ?? null);
 }
 
-export const createUserSchema = z.object({
-  email: z
-    .preprocess(
-      (value) => (value === undefined ? "" : value),
+export const createUserSchema = z
+  .object({
+    email: z.preprocess(
+      value => (value === undefined ? '' : value),
       z
         .string({ error: "El campo 'email' debe ser un string" })
         .trim()
@@ -29,18 +28,14 @@ export const createUserSchema = z.object({
             .max(254, "El campo 'email' no puede superar 254 caracteres"),
         ),
     ),
-  username: optionalText("username", 64),
-  name: optionalText("name", 120),
-}).strip();
+    username: optionalText('username', 64),
+    name: optionalText('name', 120),
+  })
+  .strip();
 
-const integerQuery = (
-  field: string,
-  fallback: number,
-  minimum: number,
-  maximum: number,
-) =>
+const integerQuery = (field: string, fallback: number, minimum: number, maximum: number) =>
   z.preprocess(
-    (value) => (value === undefined || value === "" ? String(fallback) : value),
+    value => (value === undefined || value === '' ? String(fallback) : value),
     z
       .string({ error: `El parámetro '${field}' debe ser un entero` })
       .regex(/^\d+$/, `El parámetro '${field}' debe ser un entero`)
@@ -55,8 +50,8 @@ const integerQuery = (
   );
 
 export const userPaginationSchema = z.object({
-  limit: integerQuery("limit", 50, 1, 100),
-  offset: integerQuery("offset", 0, 0, 1_000_000),
+  limit: integerQuery('limit', 50, 1, 100),
+  offset: integerQuery('offset', 0, 0, 1_000_000),
 });
 
 export const userRecordSchema = z.object({

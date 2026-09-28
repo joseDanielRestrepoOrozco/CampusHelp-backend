@@ -1,0 +1,25 @@
+{
+  "producto": "CampusHelp",
+  "dominio": "Mesa de servicios TI universitaria",
+  "estados": ["Pendiente", "En análisis", "En atención", "En validación", "Cerrada"],
+  "tipos": ["Incidente", "Solicitud de servicio"],
+  "areas": [
+    "Hardware",
+    "Software",
+    "Red y conectividad",
+    "Cuentas y acceso",
+    "Plataformas académicas"
+  ],
+  "endpoints_sugeridos": [
+    ["POST", "/api/casos", "Registrar caso"],
+    ["GET", "/api/casos", "Listar/filtrar casos"],
+    ["GET", "/api/casos/{id}", "Detalle"],
+    ["PATCH", "/api/casos/{id}/asignar", "Asignar agente"],
+    ["PATCH", "/api/casos/{id}/estado", "Cambiar estado"],
+    ["POST", "/api/casos/{id}/atencion", "Registrar atención"],
+    ["POST", "/api/casos/{id}/validacion", "Aprobar/devolver"],
+    ["GET", "/api/casos/{id}/historial", "Historial"],
+    ["GET", "/api/indicadores", "Indicadores"],
+    ["GET", "/api/categorias", "Categorías"]
+  ]
+}

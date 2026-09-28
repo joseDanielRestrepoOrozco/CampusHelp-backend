@@ -67,12 +67,8 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": [
-                    "authorId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
+                  "localFields": ["authorId"],
+                  "targetFields": ["id"]
                 },
                 "to": {
                   "model": "User",
@@ -154,12 +150,8 @@
               "posts": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "authorId"
-                  ]
+                  "localFields": ["id"],
+                  "targetFields": ["authorId"]
                 },
                 "to": {
                   "model": "Post",
@@ -245,16 +237,12 @@
               "foreignKeys": [
                 {
                   "source": {
-                    "columns": [
-                      "authorId"
-                    ],
+                    "columns": ["authorId"],
                     "namespaceId": "public",
                     "tableName": "Post"
                   },
                   "target": {
-                    "columns": [
-                      "id"
-                    ],
+                    "columns": ["id"],
                     "namespaceId": "public",
                     "tableName": "User"
                   }
@@ -262,18 +250,14 @@
               ],
               "indexes": [
                 {
-                  "columns": [
-                    "authorId"
-                  ],
+                  "columns": ["authorId"],
                   "name": "Post_authorId_idx_e47547ed",
                   "prefix": "Post_authorId_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": [
-                  "id"
-                ]
+                "columns": ["id"]
               },
               "uniques": []
             },
@@ -321,15 +305,11 @@
               "foreignKeys": [],
               "indexes": [],
               "primaryKey": {
-                "columns": [
-                  "id"
-                ]
+                "columns": ["id"]
               },
               "uniques": [
                 {
-                  "columns": [
-                    "email"
-                  ]
+                  "columns": ["email"]
                 }
               ]
             }

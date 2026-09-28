@@ -1,0 +1,11 @@
+﻿ID,Historia,Tipo,Área,Caso,Resultado esperado
+CP-01,HU-01,Incidente,Red,Registrar Wi-Fi sin conexión,Se crea y persiste el incidente.
+CP-02,HU-01,Solicitud,Software,Solicitar instalación de software,Se crea y persiste la solicitud.
+CP-03,HU-01,Incidente,Cuentas,Registrar sin descripción,El sistema rechaza el registro.
+CP-04,HU-05,Incidente,Red,Transición válida,Cambia estado y crea historial.
+CP-05,HU-05,Solicitud,Software,Transición inválida,Sistema impide la operación.
+CP-06,HU-04,Ambos,Todas,Asignar agente,Se registra responsable y fecha.
+CP-07,HU-06,Ambos,Todas,Registrar diagnóstico/solución,La atención queda almacenada.
+CP-08,HU-07,Ambos,Todas,Devolver desde validación,Vuelve a atención y registra historial.
+CP-09,HU-07,Ambos,Todas,Aprobar solución,Caso queda Cerrado y registra fecha.
+CP-10,HU-09,Ambos,Todas,Filtrar por prioridad/área/tipo,Solo aparecen coincidencias.

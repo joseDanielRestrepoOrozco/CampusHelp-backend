@@ -1,0 +1,13 @@
+﻿ID,Tipo,Área,Historia,Prioridad,Story Points sugeridos
+HU-01,Ambos,Todas,"Como solicitante, quiero registrar un incidente o solicitud para pedir atención tecnológica.",P1,5
+HU-02,Ambos,Todas,"Como solicitante, quiero consultar mis casos para conocer su estado.",P1,3
+HU-03,Ambos,Todas,"Como agente, quiero visualizar la bandeja de casos pendientes para seleccionar trabajo.",P1,3
+HU-04,Ambos,Todas,"Como agente, quiero asignarme un caso para asumir su atención.",P1,3
+HU-05,Ambos,Todas,"Como agente, quiero cambiar el estado del caso para reflejar su avance.",P1,5
+HU-06,Ambos,Todas,"Como agente, quiero registrar diagnóstico y solución para documentar la atención.",P1,5
+HU-07,Ambos,Todas,"Como validador, quiero aprobar o devolver una solución para controlar la calidad.",P1,5
+HU-08,Ambos,Todas,"Como usuario autorizado, quiero consultar el historial para conocer lo ocurrido.",P2,5
+HU-09,Ambos,Todas,"Como administrador, quiero filtrar casos para encontrarlos rápidamente.",P2,3
+HU-10,Ambos,Todas,"Como administrador, quiero visualizar indicadores para conocer el comportamiento del servicio.",P2,5
+HU-11,Ambos,Todas,"Como administrador, quiero gestionar categorías de soporte.",P2,3
+HU-12,Ambos,Todas,"Como solicitante, quiero consultar el detalle de mi caso y la solución registrada.",P3,3

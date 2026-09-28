@@ -15,7 +15,7 @@ export interface ValidationIssue {
 
 export class ValidationError extends AppError {
   constructor(public readonly issues: ValidationIssue[]) {
-    super("Datos inválidos", 400);
+    super('Datos inválidos', 400);
   }
 }
 

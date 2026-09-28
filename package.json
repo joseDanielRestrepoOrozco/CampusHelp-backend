@@ -1,4 +1,16 @@
 {
+  "type": "module",
+  "scripts": {
+    "contract:emit": "prisma contract emit",
+    "dev": "tsx --watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "prisma:format": "prisma contract format",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "fmt": "oxfmt src",
+    "fmt:check": "oxfmt src --check"
+  },
   "dependencies": {
     "@prisma/orm-postgres": "^8.0.0-rc.12",
     "cors": "^2.8.6",
@@ -8,18 +20,13 @@
     "helmet": "^8.3.0",
     "zod": "^4.6.5"
   },
-  "scripts": {
-    "contract:emit": "prisma contract emit",
-    "dev": "tsx --watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/src/index.js"
-  },
-  "type": "module",
   "devDependencies": {
     "@prisma/cli-engine": "^0.6.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.3",
+    "oxfmt": "^0.71.0",
+    "oxlint": "^1.86.0",
     "prisma": "^8.0.0-rc.17",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"

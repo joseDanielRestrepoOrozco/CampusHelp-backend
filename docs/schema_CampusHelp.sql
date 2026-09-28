@@ -1,0 +1,67 @@
+CREATE DATABASE campushelp;
+USE campushelp;
+
+CREATE TABLE usuario(
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ nombre VARCHAR(120) NOT NULL,
+ correo VARCHAR(150) NOT NULL,
+ rol VARCHAR(30) NOT NULL,
+ activo BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE area(
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ nombre VARCHAR(80) NOT NULL,
+ descripcion VARCHAR(255),
+ activa BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE categoria(
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ area_id INT NOT NULL,
+ nombre VARCHAR(100) NOT NULL,
+ descripcion VARCHAR(255),
+ activa BOOLEAN DEFAULT TRUE,
+ FOREIGN KEY(area_id) REFERENCES area(id)
+);
+
+CREATE TABLE caso(
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ tipo VARCHAR(20) NOT NULL,
+ titulo VARCHAR(180) NOT NULL,
+ descripcion TEXT NOT NULL,
+ prioridad VARCHAR(2) NOT NULL,
+ estado VARCHAR(30) NOT NULL DEFAULT 'Pendiente',
+ usuario_id INT NOT NULL,
+ categoria_id INT NOT NULL,
+ agente_id INT NULL,
+ fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ fecha_asignacion DATETIME NULL,
+ fecha_cierre DATETIME NULL,
+ FOREIGN KEY(usuario_id) REFERENCES usuario(id),
+ FOREIGN KEY(categoria_id) REFERENCES categoria(id),
+ FOREIGN KEY(agente_id) REFERENCES usuario(id)
+);
+
+CREATE TABLE atencion(
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ caso_id INT NOT NULL,
+ diagnostico TEXT,
+ solucion TEXT,
+ fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ agente_id INT NOT NULL,
+ FOREIGN KEY(caso_id) REFERENCES caso(id),
+ FOREIGN KEY(agente_id) REFERENCES usuario(id)
+);
+
+CREATE TABLE historial(
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ caso_id INT NOT NULL,
+ evento VARCHAR(120) NOT NULL,
+ estado_anterior VARCHAR(30),
+ estado_nuevo VARCHAR(30),
+ usuario_id INT NOT NULL,
+ fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(caso_id) REFERENCES caso(id),
+ FOREIGN KEY(usuario_id) REFERENCES usuario(id)
+);
