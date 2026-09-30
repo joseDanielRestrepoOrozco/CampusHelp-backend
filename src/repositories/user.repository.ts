@@ -12,18 +12,18 @@ function isUniqueViolation(error: unknown): boolean {
 export class UserRepository {
   async create(input: CreateUserInput): Promise<UserRecord> {
     try {
-      return await db.orm.public.User.create(input);
+      return await db.orm.public.Usuario.create(input);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new ConflictError('Ya existe un usuario con ese email');
+        throw new ConflictError('Ya existe un usuario con ese correo');
       }
       throw error;
     }
   }
 
   async findAll({ limit, offset }: UserPagination): Promise<UserRecord[]> {
-    return db.orm.public.User.select('id', 'email', 'username', 'name', 'createdAt', 'updatedAt')
-      .orderBy(user => user.id.asc())
+    return db.orm.public.Usuario.select('id', 'nombre', 'correo', 'rol', 'activo')
+      .orderBy(usuario => usuario.id.asc())
       .offset(offset)
       .limit(limit)
       .all();
