@@ -1,5 +1,9 @@
 import type { RequestHandler } from 'express';
 
 export const notFoundHandler: RequestHandler = (_request, response) => {
-  response.status(404).json({ error: 'Recurso no encontrado' });
+  response.status(404).json({
+    error: 'NO_ENCONTRADO',
+    mensaje: 'Recurso no encontrado',
+    detalles: [],
+  });
 };

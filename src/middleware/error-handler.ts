@@ -1,31 +1,35 @@
 import type { ErrorRequestHandler } from 'express';
-import { AppError, ValidationError } from '../errors/app-error.js';
+import { AppError } from '../errors/app-error.js';
 
 function hasErrorType(error: unknown, type: string): boolean {
   return typeof error === 'object' && error !== null && 'type' in error && error.type === type;
 }
 
 export const errorHandler: ErrorRequestHandler = (error, request, response, _next) => {
-  if (error instanceof ValidationError) {
+  if (error instanceof AppError) {
     response.status(error.statusCode).json({
-      error: error.message,
-      issues: error.issues,
+      error: error.code,
+      mensaje: error.message,
+      detalles: error.detalles,
     });
     return;
   }
 
-  if (error instanceof AppError) {
-    response.status(error.statusCode).json({ error: error.message });
-    return;
-  }
-
   if (hasErrorType(error, 'entity.parse.failed')) {
-    response.status(400).json({ error: 'El cuerpo debe contener JSON válido' });
+    response.status(400).json({
+      error: 'VALIDACION',
+      mensaje: 'El cuerpo debe contener JSON válido',
+      detalles: [],
+    });
     return;
   }
 
   if (hasErrorType(error, 'entity.too.large')) {
-    response.status(413).json({ error: 'El cuerpo de la solicitud es demasiado grande' });
+    response.status(413).json({
+      error: 'VALIDACION',
+      mensaje: 'El cuerpo de la solicitud es demasiado grande',
+      detalles: [],
+    });
     return;
   }
 
@@ -34,5 +38,10 @@ export const errorHandler: ErrorRequestHandler = (error, request, response, _nex
     method: request.method,
     path: request.path,
   });
-  response.status(500).json({ error: 'Error interno del servidor' });
+
+  response.status(500).json({
+    error: 'ERROR_INTERNO',
+    mensaje: 'Error interno del servidor',
+    detalles: [],
+  });
 };
