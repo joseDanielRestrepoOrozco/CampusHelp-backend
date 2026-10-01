@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { notFoundHandler } from './middleware/not-found-handler.js';
 import { userRouter } from './routes/user.routes.js';
+import { casosRouter } from './routes/casos.routes.js';
 
 const app = express();
 
@@ -22,12 +23,17 @@ app.use(
     limit: 300,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'Demasiadas solicitudes. Inténtalo de nuevo más tarde.' },
+    message: {
+      error: 'VALIDACION',
+      mensaje: 'Demasiadas solicitudes. Inténtalo de nuevo más tarde.',
+      detalles: [],
+    },
   }),
 );
 app.use(express.json({ limit: '16kb' }));
 
 app.use('/users', userRouter);
+app.use('/api', casosRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 

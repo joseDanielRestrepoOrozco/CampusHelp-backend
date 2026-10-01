@@ -15,7 +15,7 @@ export class UserRepository {
       return await db.orm.public.Usuario.create(input);
     } catch (error) {
       if (isUniqueViolation(error)) {
-        throw new ConflictError('Ya existe un usuario con ese correo');
+        throw new ConflictError('CONFLICTO', 'Ya existe un usuario con ese correo');
       }
       throw error;
     }
