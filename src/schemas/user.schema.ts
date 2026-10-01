@@ -1,35 +1,27 @@
 import { z } from 'zod';
 
-function optionalText(field: string, maxLength: number) {
-  return z
-    .preprocess(
-      value => (typeof value === 'string' && value.trim() === '' ? undefined : value),
-      z
-        .string({ error: `El campo '${field}' debe ser un string` })
-        .trim()
-        .max(maxLength, `El campo '${field}' no puede superar ${maxLength} caracteres`)
-        .optional(),
-    )
-    .transform(value => value ?? null);
+export const rolSchema = z.enum(['SOLICITANTE', 'AGENTE', 'VALIDADOR', 'ADMINISTRADOR'], {
+  error: "El campo 'rol' debe ser SOLICITANTE, AGENTE, VALIDADOR o ADMINISTRADOR",
+});
+
+function requiredText(field: string, maxLength: number) {
+  return z.preprocess(
+    value => (value === undefined ? '' : value),
+    z
+      .string({ error: `El campo '${field}' debe ser un string` })
+      .trim()
+      .min(1, `El campo '${field}' es obligatorio`)
+      .max(maxLength, `El campo '${field}' no puede superar ${maxLength} caracteres`),
+  );
 }
 
 export const createUserSchema = z
   .object({
-    email: z.preprocess(
-      value => (value === undefined ? '' : value),
-      z
-        .string({ error: "El campo 'email' debe ser un string" })
-        .trim()
-        .min(1, "El campo 'email' es obligatorio")
-        .pipe(
-          z
-            .string()
-            .email("El campo 'email' no tiene un formato válido")
-            .max(254, "El campo 'email' no puede superar 254 caracteres"),
-        ),
+    nombre: requiredText('nombre', 120),
+    correo: requiredText('correo', 150).pipe(
+      z.string().email("El campo 'correo' no tiene un formato válido"),
     ),
-    username: optionalText('username', 64),
-    name: optionalText('name', 120),
+    rol: rolSchema,
   })
   .strip();
 
@@ -56,11 +48,10 @@ export const userPaginationSchema = z.object({
 
 export const userRecordSchema = z.object({
   id: z.number().int().positive(),
-  email: z.string(),
-  username: z.string().nullable(),
-  name: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  nombre: z.string(),
+  correo: z.string(),
+  rol: rolSchema,
+  activo: z.boolean(),
 });
 
 // `z.compile` devuelve un clon con una ruta rápida generada; el esquema original
