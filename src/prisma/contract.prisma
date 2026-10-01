@@ -1,134 +1,20 @@
 // use prisma-8
-
-// Los enums se guardan como texto y la BD los valida con un CHECK generado,
-// así un valor fuera del conjunto se rechaza en la propia base (RN-01, RN-06).
-enum Rol {
-  @@type("pg/text@1")
-  SOLICITANTE = "SOLICITANTE"
-  AGENTE = "AGENTE"
-  VALIDADOR = "VALIDADOR"
-  ADMINISTRADOR = "ADMINISTRADOR"
+model User {
+  id        Int                        @id @default(autoincrement())
+  email     String                     @unique
+  username  String?
+  name      String?
+  posts     Post[]
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
 }
 
-enum TipoCaso {
-  @@type("pg/text@1")
-  INCIDENTE = "INCIDENTE"
-  SOLICITUD = "SOLICITUD"
-}
-
-enum Prioridad {
-  @@type("pg/text@1")
-  P1 = "P1"
-  P2 = "P2"
-  P3 = "P3"
-}
-
-enum EstadoCaso {
-  @@type("pg/text@1")
-  PENDIENTE = "PENDIENTE"
-  EN_ANALISIS = "EN_ANALISIS"
-  EN_ATENCION = "EN_ATENCION"
-  EN_VALIDACION = "EN_VALIDACION"
-  CERRADA = "CERRADA"
-}
-
-enum EventoHistorial {
-  @@type("pg/text@1")
-  CREACION = "CREACION"
-  RECLASIFICACION = "RECLASIFICACION"
-  ASIGNACION = "ASIGNACION"
-  CAMBIO_ESTADO = "CAMBIO_ESTADO"
-  ATENCION = "ATENCION"
-  APROBACION = "APROBACION"
-  DEVOLUCION = "DEVOLUCION"
-}
-
-// Los textos cortos van como String (text) y no VarChar(n): con @prisma/orm-postgres
-// rc.12 un campo VarChar deja sin tipos el `create` del ORM. Las longitudes máximas
-// (nombre 120, correo 150, titulo 5–180, etc.) se validan con Zod en la API.
-model Usuario {
-  id     Int     @id @default(autoincrement())
-  nombre String
-  correo String  @unique
-  rol    Rol
-  activo Boolean @default(true)
-
-  @@map("usuario")
-}
-
-model Area {
-  id          Int     @id @default(autoincrement())
-  nombre      String  @unique
-  descripcion String?
-  activa      Boolean @default(true)
-
-  @@map("area")
-}
-
-model Categoria {
-  id          Int     @id @default(autoincrement())
-  areaId      Int     @map("area_id")
-  area        Area    @relation(fields:[areaId], references:[id])
-  nombre      String
-  descripcion String?
-  activa      Boolean @default(true)
-
-  // RN-22: no puede haber dos categorías con el mismo nombre en un área.
-  @@unique([areaId, nombre])
-  @@map("categoria")
-}
-
-// El caso no guarda area_id: el área sale de la categoría (RN-03).
-model Caso {
-  id              Int                @id @default(autoincrement())
-  tipo            TipoCaso
-  titulo          String
-  descripcion     String
-  prioridad       Prioridad
-  estado          EstadoCaso         @default(PENDIENTE)
-  solicitanteId   Int                @map("usuario_id")
-  solicitante     Usuario            @relation("CasoSolicitante", fields:[solicitanteId], references:[id])
-  categoriaId     Int                @map("categoria_id")
-  categoria       Categoria          @relation(fields:[categoriaId], references:[id])
-  agenteId        Int?               @map("agente_id")
-  agente          Usuario?           @relation("CasoAgente", fields:[agenteId], references:[id])
-  fechaCreacion   TimestamptzString  @default(now()) @map("fecha_creacion")
-  fechaAsignacion TimestamptzString? @map("fecha_asignacion")
-  fechaCierre     TimestamptzString? @map("fecha_cierre")
-
-  @@index([estado])
-  @@index([solicitanteId])
-  @@index([agenteId])
-  @@map("caso")
-}
-
-// Un caso puede tener varias atenciones por las devoluciones; la vigente es la más reciente.
-model Atencion {
-  id          Int               @id @default(autoincrement())
-  casoId      Int               @map("caso_id")
-  caso        Caso              @relation(fields:[casoId], references:[id])
-  diagnostico String
-  solucion    String
-  fecha       TimestamptzString @default(now())
-  agenteId    Int               @map("agente_id")
-  agente      Usuario           @relation(fields:[agenteId], references:[id])
-
-  @@map("atencion")
-}
-
-model Historial {
-  id             Int               @id @default(autoincrement())
-  casoId         Int               @map("caso_id")
-  caso           Caso              @relation(fields:[casoId], references:[id])
-  evento         EventoHistorial
-  estadoAnterior EstadoCaso?       @map("estado_anterior")
-  estadoNuevo    EstadoCaso?       @map("estado_nuevo")
-  usuarioId      Int               @map("usuario_id")
-  usuario        Usuario           @relation(fields:[usuarioId], references:[id])
-  fecha          TimestamptzString @default(now())
-  // Motivo de una devolución o detalle de una reclasificación.
-  comentario     String?
-
-  @@index([casoId])
-  @@map("historial")
+model Post {
+  id        Int                        @id @default(autoincrement())
+  title     String
+  content   String?
+  author    User                       @relation(fields:[authorId], references:[id])
+  authorId  Int
+  createdAt TimestamptzString          @default(now())
+  updatedAt temporal.updatedAtString()
 }

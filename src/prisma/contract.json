@@ -4,221 +4,36 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "area": {
-      "model": "Area",
+    "Post": {
+      "model": "Post",
       "namespace": "public"
     },
-    "atencion": {
-      "model": "Atencion",
-      "namespace": "public"
-    },
-    "caso": {
-      "model": "Caso",
-      "namespace": "public"
-    },
-    "categoria": {
-      "model": "Categoria",
-      "namespace": "public"
-    },
-    "historial": {
-      "model": "Historial",
-      "namespace": "public"
-    },
-    "usuario": {
-      "model": "Usuario",
+    "User": {
+      "model": "User",
       "namespace": "public"
     }
   },
   "domain": {
     "namespaces": {
       "public": {
-        "enum": {
-          "EstadoCaso": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "PENDIENTE",
-                "value": "PENDIENTE"
-              },
-              {
-                "name": "EN_ANALISIS",
-                "value": "EN_ANALISIS"
-              },
-              {
-                "name": "EN_ATENCION",
-                "value": "EN_ATENCION"
-              },
-              {
-                "name": "EN_VALIDACION",
-                "value": "EN_VALIDACION"
-              },
-              {
-                "name": "CERRADA",
-                "value": "CERRADA"
-              }
-            ]
-          },
-          "EventoHistorial": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "CREACION",
-                "value": "CREACION"
-              },
-              {
-                "name": "RECLASIFICACION",
-                "value": "RECLASIFICACION"
-              },
-              {
-                "name": "ASIGNACION",
-                "value": "ASIGNACION"
-              },
-              {
-                "name": "CAMBIO_ESTADO",
-                "value": "CAMBIO_ESTADO"
-              },
-              {
-                "name": "ATENCION",
-                "value": "ATENCION"
-              },
-              {
-                "name": "APROBACION",
-                "value": "APROBACION"
-              },
-              {
-                "name": "DEVOLUCION",
-                "value": "DEVOLUCION"
-              }
-            ]
-          },
-          "Prioridad": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "P1",
-                "value": "P1"
-              },
-              {
-                "name": "P2",
-                "value": "P2"
-              },
-              {
-                "name": "P3",
-                "value": "P3"
-              }
-            ]
-          },
-          "Rol": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "SOLICITANTE",
-                "value": "SOLICITANTE"
-              },
-              {
-                "name": "AGENTE",
-                "value": "AGENTE"
-              },
-              {
-                "name": "VALIDADOR",
-                "value": "VALIDADOR"
-              },
-              {
-                "name": "ADMINISTRADOR",
-                "value": "ADMINISTRADOR"
-              }
-            ]
-          },
-          "TipoCaso": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "INCIDENTE",
-                "value": "INCIDENTE"
-              },
-              {
-                "name": "SOLICITUD",
-                "value": "SOLICITUD"
-              }
-            ]
-          }
-        },
         "models": {
-          "Area": {
+          "Post": {
             "fields": {
-              "activa": {
+              "authorId": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/bool@1",
+                  "codecId": "pg/int4@1",
                   "kind": "scalar"
                 }
               },
-              "descripcion": {
+              "content": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "nombre": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {},
-            "storage": {
-              "fields": {
-                "activa": {
-                  "column": "activa"
-                },
-                "descripcion": {
-                  "column": "descripcion"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "nombre": {
-                  "column": "nombre"
-                }
-              },
-              "namespaceId": "public",
-              "table": "area"
-            }
-          },
-          "Atencion": {
-            "fields": {
-              "agenteId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "casoId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "diagnostico": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "fecha": {
+              "createdAt": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
@@ -232,8 +47,103 @@
                   "kind": "scalar"
                 }
               },
-              "solucion": {
+              "title": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "author": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "authorId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "authorId": {
+                  "column": "authorId"
+                },
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Post"
+            }
+          },
+          "User": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "username": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -241,547 +151,45 @@
               }
             },
             "relations": {
-              "agente": {
-                "cardinality": "N:1",
-                "nullable": false,
+              "posts": {
+                "cardinality": "1:N",
                 "on": {
                   "localFields": [
-                    "agenteId"
+                    "id"
                   ],
                   "targetFields": [
-                    "id"
+                    "authorId"
                   ]
                 },
                 "to": {
-                  "model": "Usuario",
-                  "namespace": "public"
-                }
-              },
-              "caso": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "casoId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Caso",
+                  "model": "Post",
                   "namespace": "public"
                 }
               }
             },
             "storage": {
               "fields": {
-                "agenteId": {
-                  "column": "agente_id"
+                "createdAt": {
+                  "column": "createdAt"
                 },
-                "casoId": {
-                  "column": "caso_id"
-                },
-                "diagnostico": {
-                  "column": "diagnostico"
-                },
-                "fecha": {
-                  "column": "fecha"
+                "email": {
+                  "column": "email"
                 },
                 "id": {
                   "column": "id"
                 },
-                "solucion": {
-                  "column": "solucion"
+                "name": {
+                  "column": "name"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "username": {
+                  "column": "username"
                 }
               },
               "namespaceId": "public",
-              "table": "atencion"
-            }
-          },
-          "Caso": {
-            "fields": {
-              "agenteId": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "categoriaId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "descripcion": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "estado": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "EstadoCaso",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "fechaAsignacion": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "fechaCierre": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "fechaCreacion": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "prioridad": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "Prioridad",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "solicitanteId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "tipo": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "TipoCaso",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "titulo": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "agente": {
-                "cardinality": "N:1",
-                "nullable": true,
-                "on": {
-                  "localFields": [
-                    "agenteId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Usuario",
-                  "namespace": "public"
-                }
-              },
-              "categoria": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "categoriaId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Categoria",
-                  "namespace": "public"
-                }
-              },
-              "solicitante": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "solicitanteId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Usuario",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "agenteId": {
-                  "column": "agente_id"
-                },
-                "categoriaId": {
-                  "column": "categoria_id"
-                },
-                "descripcion": {
-                  "column": "descripcion"
-                },
-                "estado": {
-                  "column": "estado"
-                },
-                "fechaAsignacion": {
-                  "column": "fecha_asignacion"
-                },
-                "fechaCierre": {
-                  "column": "fecha_cierre"
-                },
-                "fechaCreacion": {
-                  "column": "fecha_creacion"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "prioridad": {
-                  "column": "prioridad"
-                },
-                "solicitanteId": {
-                  "column": "usuario_id"
-                },
-                "tipo": {
-                  "column": "tipo"
-                },
-                "titulo": {
-                  "column": "titulo"
-                }
-              },
-              "namespaceId": "public",
-              "table": "caso"
-            }
-          },
-          "Categoria": {
-            "fields": {
-              "activa": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
-              "areaId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "descripcion": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "nombre": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "area": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "areaId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Area",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "activa": {
-                  "column": "activa"
-                },
-                "areaId": {
-                  "column": "area_id"
-                },
-                "descripcion": {
-                  "column": "descripcion"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "nombre": {
-                  "column": "nombre"
-                }
-              },
-              "namespaceId": "public",
-              "table": "categoria"
-            }
-          },
-          "Historial": {
-            "fields": {
-              "casoId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "comentario": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "estadoAnterior": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "EstadoCaso",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "estadoNuevo": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "EstadoCaso",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "evento": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "EventoHistorial",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              },
-              "fecha": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "usuarioId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "caso": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "casoId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Caso",
-                  "namespace": "public"
-                }
-              },
-              "usuario": {
-                "cardinality": "N:1",
-                "nullable": false,
-                "on": {
-                  "localFields": [
-                    "usuarioId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Usuario",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "casoId": {
-                  "column": "caso_id"
-                },
-                "comentario": {
-                  "column": "comentario"
-                },
-                "estadoAnterior": {
-                  "column": "estado_anterior"
-                },
-                "estadoNuevo": {
-                  "column": "estado_nuevo"
-                },
-                "evento": {
-                  "column": "evento"
-                },
-                "fecha": {
-                  "column": "fecha"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "usuarioId": {
-                  "column": "usuario_id"
-                }
-              },
-              "namespaceId": "public",
-              "table": "historial"
-            }
-          },
-          "Usuario": {
-            "fields": {
-              "activo": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
-              "correo": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "nombre": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "rol": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "Rol",
-                  "namespaceId": "public",
-                  "plane": "domain"
-                }
-              }
-            },
-            "relations": {},
-            "storage": {
-              "fields": {
-                "activo": {
-                  "column": "activo"
-                },
-                "correo": {
-                  "column": "correo"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "nombre": {
-                  "column": "nombre"
-                },
-                "rol": {
-                  "column": "rol"
-                }
-              },
-              "namespaceId": "public",
-              "table": "usuario"
+              "table": "User"
             }
           }
         }
@@ -793,21 +201,26 @@
       "public": {
         "entries": {
           "table": {
-            "area": {
+            "Post": {
               "columns": {
-                "activa": {
-                  "codecId": "pg/bool@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": true
-                  },
-                  "nativeType": "bool",
+                "authorId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
                   "nullable": false
                 },
-                "descripcion": {
+                "content": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
                 },
                 "id": {
                   "codecId": "pg/int4@1",
@@ -818,10 +231,91 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
-                "nombre": {
+                "title": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "source": {
+                    "columns": [
+                      "authorId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Post"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "authorId"
+                  ],
+                  "name": "Post_authorId_idx_e47547ed",
+                  "prefix": "Post_authorId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "User": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "username": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 }
               },
               "foreignKeys": [],
@@ -834,645 +328,9 @@
               "uniques": [
                 {
                   "columns": [
-                    "nombre"
+                    "email"
                   ]
                 }
-              ]
-            },
-            "atencion": {
-              "columns": {
-                "agente_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "caso_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "diagnostico": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "fecha": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "solucion": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "caso_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "atencion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "caso"
-                  }
-                },
-                {
-                  "source": {
-                    "columns": [
-                      "agente_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "atencion"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "usuario"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "agente_id"
-                  ],
-                  "name": "atencion_agente_id_idx_2dfdd41f",
-                  "prefix": "atencion_agente_id_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "caso_id"
-                  ],
-                  "name": "atencion_caso_id_idx_75e3250f",
-                  "prefix": "atencion_caso_id_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
-            "caso": {
-              "checks": [
-                {
-                  "expression": "\"estado\" IN ('PENDIENTE', 'EN_ANALISIS', 'EN_ATENCION', 'EN_VALIDACION', 'CERRADA')",
-                  "name": "caso_estado_check_ce88b551",
-                  "prefix": "caso_estado_check"
-                },
-                {
-                  "expression": "\"prioridad\" IN ('P1', 'P2', 'P3')",
-                  "name": "caso_prioridad_check_c2c1af30",
-                  "prefix": "caso_prioridad_check"
-                },
-                {
-                  "expression": "\"tipo\" IN ('INCIDENTE', 'SOLICITUD')",
-                  "name": "caso_tipo_check_81fc72ae",
-                  "prefix": "caso_tipo_check"
-                }
-              ],
-              "columns": {
-                "agente_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": true
-                },
-                "categoria_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "descripcion": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "estado": {
-                  "codecId": "pg/text@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": "PENDIENTE"
-                  },
-                  "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "EstadoCaso",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "fecha_asignacion": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": true
-                },
-                "fecha_cierre": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": true
-                },
-                "fecha_creacion": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "prioridad": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "Prioridad",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "tipo": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "TipoCaso",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "titulo": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "usuario_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "usuario_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "caso"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "usuario"
-                  }
-                },
-                {
-                  "source": {
-                    "columns": [
-                      "categoria_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "caso"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "categoria"
-                  }
-                },
-                {
-                  "source": {
-                    "columns": [
-                      "agente_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "caso"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "usuario"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "agente_id"
-                  ],
-                  "name": "caso_agente_id_idx_2dfdd41f",
-                  "prefix": "caso_agente_id_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "categoria_id"
-                  ],
-                  "name": "caso_categoria_id_idx_6ad70c39",
-                  "prefix": "caso_categoria_id_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "estado"
-                  ],
-                  "name": "caso_estado_idx_c74e5888",
-                  "prefix": "caso_estado_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "usuario_id"
-                  ],
-                  "name": "caso_usuario_id_idx_65b6616a",
-                  "prefix": "caso_usuario_id_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
-            "categoria": {
-              "columns": {
-                "activa": {
-                  "codecId": "pg/bool@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": true
-                  },
-                  "nativeType": "bool",
-                  "nullable": false
-                },
-                "area_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "descripcion": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "nombre": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "area_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "categoria"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "area"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "area_id"
-                  ],
-                  "name": "categoria_area_id_idx_106c7330",
-                  "prefix": "categoria_area_id_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "area_id",
-                    "nombre"
-                  ]
-                }
-              ]
-            },
-            "historial": {
-              "checks": [
-                {
-                  "expression": "\"estado_anterior\" IN ('PENDIENTE', 'EN_ANALISIS', 'EN_ATENCION', 'EN_VALIDACION', 'CERRADA')",
-                  "name": "historial_estado_anterior_check_11b7349e",
-                  "prefix": "historial_estado_anterior_check"
-                },
-                {
-                  "expression": "\"estado_nuevo\" IN ('PENDIENTE', 'EN_ANALISIS', 'EN_ATENCION', 'EN_VALIDACION', 'CERRADA')",
-                  "name": "historial_estado_nuevo_check_9c1435d6",
-                  "prefix": "historial_estado_nuevo_check"
-                },
-                {
-                  "expression": "\"evento\" IN ('CREACION', 'RECLASIFICACION', 'ASIGNACION', 'CAMBIO_ESTADO', 'ATENCION', 'APROBACION', 'DEVOLUCION')",
-                  "name": "historial_evento_check_d99bc0fe",
-                  "prefix": "historial_evento_check"
-                }
-              ],
-              "columns": {
-                "caso_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "comentario": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "estado_anterior": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "EstadoCaso",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "estado_nuevo": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "EstadoCaso",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "evento": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "EventoHistorial",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                },
-                "fecha": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "usuario_id": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "source": {
-                    "columns": [
-                      "caso_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "historial"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "caso"
-                  }
-                },
-                {
-                  "source": {
-                    "columns": [
-                      "usuario_id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "historial"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "usuario"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "caso_id"
-                  ],
-                  "name": "historial_caso_id_idx_75e3250f",
-                  "prefix": "historial_caso_id_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "usuario_id"
-                  ],
-                  "name": "historial_usuario_id_idx_65b6616a",
-                  "prefix": "historial_usuario_id_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": []
-            },
-            "usuario": {
-              "checks": [
-                {
-                  "expression": "\"rol\" IN ('SOLICITANTE', 'AGENTE', 'VALIDADOR', 'ADMINISTRADOR')",
-                  "name": "usuario_rol_check_55a43367",
-                  "prefix": "usuario_rol_check"
-                }
-              ],
-              "columns": {
-                "activo": {
-                  "codecId": "pg/bool@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": true
-                  },
-                  "nativeType": "bool",
-                  "nullable": false
-                },
-                "correo": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "nombre": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "rol": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "Rol",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
-                }
-              },
-              "foreignKeys": [],
-              "indexes": [],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "correo"
-                  ]
-                }
-              ]
-            }
-          },
-          "valueSet": {
-            "EstadoCaso": {
-              "kind": "valueSet",
-              "values": [
-                "PENDIENTE",
-                "EN_ANALISIS",
-                "EN_ATENCION",
-                "EN_VALIDACION",
-                "CERRADA"
-              ]
-            },
-            "EventoHistorial": {
-              "kind": "valueSet",
-              "values": [
-                "CREACION",
-                "RECLASIFICACION",
-                "ASIGNACION",
-                "CAMBIO_ESTADO",
-                "ATENCION",
-                "APROBACION",
-                "DEVOLUCION"
-              ]
-            },
-            "Prioridad": {
-              "kind": "valueSet",
-              "values": [
-                "P1",
-                "P2",
-                "P3"
-              ]
-            },
-            "Rol": {
-              "kind": "valueSet",
-              "values": [
-                "SOLICITANTE",
-                "AGENTE",
-                "VALIDADOR",
-                "ADMINISTRADOR"
-              ]
-            },
-            "TipoCaso": {
-              "kind": "valueSet",
-              "values": [
-                "INCIDENTE",
-                "SOLICITUD"
               ]
             }
           }
@@ -1481,7 +339,44 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "eccce1460cf7d1e3e787d2544c944935a0a135acf8aecc6f758b57017cccdc78"
+    "storageHash": "91e7f9f035806fa2789a4d726ef7724cad434fd6b00014d47ebf12d6e6bb784e"
+  },
+  "execution": {
+    "executionHash": "796fa270d853489edb1c3e0d332d596412292127a259b856b495a498c752882a",
+    "mutations": {
+      "defaults": [
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "Post"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "User"
+          }
+        }
+      ]
+    }
   },
   "capabilities": {
     "postgres": {
