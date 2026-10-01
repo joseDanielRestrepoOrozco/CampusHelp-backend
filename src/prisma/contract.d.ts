@@ -34,8 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'eccce1460cf7d1e3e787d2544c944935a0a135acf8aecc6f758b57017cccdc78'>;
-export type ExecutionHash = ExecutionHashBase<string>;
+  StorageHashBase<'91e7f9f035806fa2789a4d726ef7724cad434fd6b00014d47ebf12d6e6bb784e'>;
+export type ExecutionHash =
+  ExecutionHashBase<'796fa270d853489edb1c3e0d332d596412292127a259b856b495a498c752882a'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -249,350 +250,112 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
-    readonly Area: {
-      readonly activa: CodecTypes['pg/bool@1']['output'];
-      readonly descripcion: CodecTypes['pg/text@1']['output'] | null;
+    readonly Post: {
+      readonly authorId: CodecTypes['pg/int4@1']['output'];
+      readonly content: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly nombre: CodecTypes['pg/text@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly Atencion: {
-      readonly agenteId: CodecTypes['pg/int4@1']['output'];
-      readonly casoId: CodecTypes['pg/int4@1']['output'];
-      readonly diagnostico: CodecTypes['pg/text@1']['output'];
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['output'];
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly solucion: CodecTypes['pg/text@1']['output'];
-    };
-    readonly Caso: {
-      readonly agenteId: CodecTypes['pg/int4@1']['output'] | null;
-      readonly categoriaId: CodecTypes['pg/int4@1']['output'];
-      readonly descripcion: CodecTypes['pg/text@1']['output'];
-      readonly estado: 'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA';
-      readonly fechaAsignacion: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-      readonly fechaCierre: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-      readonly fechaCreacion: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly prioridad: 'P1' | 'P2' | 'P3';
-      readonly solicitanteId: CodecTypes['pg/int4@1']['output'];
-      readonly tipo: 'INCIDENTE' | 'SOLICITUD';
-      readonly titulo: CodecTypes['pg/text@1']['output'];
-    };
-    readonly Categoria: {
-      readonly activa: CodecTypes['pg/bool@1']['output'];
-      readonly areaId: CodecTypes['pg/int4@1']['output'];
-      readonly descripcion: CodecTypes['pg/text@1']['output'] | null;
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly nombre: CodecTypes['pg/text@1']['output'];
-    };
-    readonly Historial: {
-      readonly casoId: CodecTypes['pg/int4@1']['output'];
-      readonly comentario: CodecTypes['pg/text@1']['output'] | null;
-      readonly estadoAnterior:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly estadoNuevo:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly evento:
-        | 'CREACION'
-        | 'RECLASIFICACION'
-        | 'ASIGNACION'
-        | 'CAMBIO_ESTADO'
-        | 'ATENCION'
-        | 'APROBACION'
-        | 'DEVOLUCION';
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly usuarioId: CodecTypes['pg/int4@1']['output'];
-    };
-    readonly Usuario: {
-      readonly activo: CodecTypes['pg/bool@1']['output'];
-      readonly correo: CodecTypes['pg/text@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly nombre: CodecTypes['pg/text@1']['output'];
-      readonly rol: 'SOLICITANTE' | 'AGENTE' | 'VALIDADOR' | 'ADMINISTRADOR';
+      readonly name: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly username: CodecTypes['pg/text@1']['output'] | null;
     };
   };
 };
 export type FieldInputTypes = {
   readonly public: {
-    readonly Area: {
-      readonly activa: CodecTypes['pg/bool@1']['input'];
-      readonly descripcion: CodecTypes['pg/text@1']['input'] | null;
+    readonly Post: {
+      readonly authorId: CodecTypes['pg/int4@1']['input'];
+      readonly content: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly nombre: CodecTypes['pg/text@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly Atencion: {
-      readonly agenteId: CodecTypes['pg/int4@1']['input'];
-      readonly casoId: CodecTypes['pg/int4@1']['input'];
-      readonly diagnostico: CodecTypes['pg/text@1']['input'];
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['input'];
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly solucion: CodecTypes['pg/text@1']['input'];
-    };
-    readonly Caso: {
-      readonly agenteId: CodecTypes['pg/int4@1']['input'] | null;
-      readonly categoriaId: CodecTypes['pg/int4@1']['input'];
-      readonly descripcion: CodecTypes['pg/text@1']['input'];
-      readonly estado: 'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA';
-      readonly fechaAsignacion: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-      readonly fechaCierre: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-      readonly fechaCreacion: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly prioridad: 'P1' | 'P2' | 'P3';
-      readonly solicitanteId: CodecTypes['pg/int4@1']['input'];
-      readonly tipo: 'INCIDENTE' | 'SOLICITUD';
-      readonly titulo: CodecTypes['pg/text@1']['input'];
-    };
-    readonly Categoria: {
-      readonly activa: CodecTypes['pg/bool@1']['input'];
-      readonly areaId: CodecTypes['pg/int4@1']['input'];
-      readonly descripcion: CodecTypes['pg/text@1']['input'] | null;
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly nombre: CodecTypes['pg/text@1']['input'];
-    };
-    readonly Historial: {
-      readonly casoId: CodecTypes['pg/int4@1']['input'];
-      readonly comentario: CodecTypes['pg/text@1']['input'] | null;
-      readonly estadoAnterior:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly estadoNuevo:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly evento:
-        | 'CREACION'
-        | 'RECLASIFICACION'
-        | 'ASIGNACION'
-        | 'CAMBIO_ESTADO'
-        | 'ATENCION'
-        | 'APROBACION'
-        | 'DEVOLUCION';
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly usuarioId: CodecTypes['pg/int4@1']['input'];
-    };
-    readonly Usuario: {
-      readonly activo: CodecTypes['pg/bool@1']['input'];
-      readonly correo: CodecTypes['pg/text@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly nombre: CodecTypes['pg/text@1']['input'];
-      readonly rol: 'SOLICITANTE' | 'AGENTE' | 'VALIDADOR' | 'ADMINISTRADOR';
+      readonly name: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly username: CodecTypes['pg/text@1']['input'] | null;
     };
   };
 };
 export type StorageColumnTypes = {
   readonly public: {
-    readonly area: {
-      readonly activa: CodecTypes['pg/bool@1']['output'];
-      readonly descripcion: CodecTypes['pg/text@1']['output'] | null;
+    readonly Post: {
+      readonly authorId: CodecTypes['pg/int4@1']['output'];
+      readonly content: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly nombre: CodecTypes['pg/text@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
-    readonly atencion: {
-      readonly agente_id: CodecTypes['pg/int4@1']['output'];
-      readonly caso_id: CodecTypes['pg/int4@1']['output'];
-      readonly diagnostico: CodecTypes['pg/text@1']['output'];
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['output'];
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly solucion: CodecTypes['pg/text@1']['output'];
-    };
-    readonly caso: {
-      readonly agente_id: CodecTypes['pg/int4@1']['output'] | null;
-      readonly categoria_id: CodecTypes['pg/int4@1']['output'];
-      readonly descripcion: CodecTypes['pg/text@1']['output'];
-      readonly estado: 'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA';
-      readonly fecha_asignacion: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-      readonly fecha_cierre: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-      readonly fecha_creacion: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly prioridad: 'P1' | 'P2' | 'P3';
-      readonly tipo: 'INCIDENTE' | 'SOLICITUD';
-      readonly titulo: CodecTypes['pg/text@1']['output'];
-      readonly usuario_id: CodecTypes['pg/int4@1']['output'];
-    };
-    readonly categoria: {
-      readonly activa: CodecTypes['pg/bool@1']['output'];
-      readonly area_id: CodecTypes['pg/int4@1']['output'];
-      readonly descripcion: CodecTypes['pg/text@1']['output'] | null;
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly nombre: CodecTypes['pg/text@1']['output'];
-    };
-    readonly historial: {
-      readonly caso_id: CodecTypes['pg/int4@1']['output'];
-      readonly comentario: CodecTypes['pg/text@1']['output'] | null;
-      readonly estado_anterior:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly estado_nuevo:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly evento:
-        | 'CREACION'
-        | 'RECLASIFICACION'
-        | 'ASIGNACION'
-        | 'CAMBIO_ESTADO'
-        | 'ATENCION'
-        | 'APROBACION'
-        | 'DEVOLUCION';
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly usuario_id: CodecTypes['pg/int4@1']['output'];
-    };
-    readonly usuario: {
-      readonly activo: CodecTypes['pg/bool@1']['output'];
-      readonly correo: CodecTypes['pg/text@1']['output'];
-      readonly id: CodecTypes['pg/int4@1']['output'];
-      readonly nombre: CodecTypes['pg/text@1']['output'];
-      readonly rol: 'SOLICITANTE' | 'AGENTE' | 'VALIDADOR' | 'ADMINISTRADOR';
+      readonly name: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly username: CodecTypes['pg/text@1']['output'] | null;
     };
   };
 };
 export type StorageColumnInputTypes = {
   readonly public: {
-    readonly area: {
-      readonly activa: CodecTypes['pg/bool@1']['input'];
-      readonly descripcion: CodecTypes['pg/text@1']['input'] | null;
+    readonly Post: {
+      readonly authorId: CodecTypes['pg/int4@1']['input'];
+      readonly content: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly nombre: CodecTypes['pg/text@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
-    readonly atencion: {
-      readonly agente_id: CodecTypes['pg/int4@1']['input'];
-      readonly caso_id: CodecTypes['pg/int4@1']['input'];
-      readonly diagnostico: CodecTypes['pg/text@1']['input'];
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['input'];
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly solucion: CodecTypes['pg/text@1']['input'];
-    };
-    readonly caso: {
-      readonly agente_id: CodecTypes['pg/int4@1']['input'] | null;
-      readonly categoria_id: CodecTypes['pg/int4@1']['input'];
-      readonly descripcion: CodecTypes['pg/text@1']['input'];
-      readonly estado: 'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA';
-      readonly fecha_asignacion: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-      readonly fecha_cierre: CodecTypes['pg/timestamptz-string@1']['input'] | null;
-      readonly fecha_creacion: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly prioridad: 'P1' | 'P2' | 'P3';
-      readonly tipo: 'INCIDENTE' | 'SOLICITUD';
-      readonly titulo: CodecTypes['pg/text@1']['input'];
-      readonly usuario_id: CodecTypes['pg/int4@1']['input'];
-    };
-    readonly categoria: {
-      readonly activa: CodecTypes['pg/bool@1']['input'];
-      readonly area_id: CodecTypes['pg/int4@1']['input'];
-      readonly descripcion: CodecTypes['pg/text@1']['input'] | null;
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly nombre: CodecTypes['pg/text@1']['input'];
-    };
-    readonly historial: {
-      readonly caso_id: CodecTypes['pg/int4@1']['input'];
-      readonly comentario: CodecTypes['pg/text@1']['input'] | null;
-      readonly estado_anterior:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly estado_nuevo:
-        'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-      readonly evento:
-        | 'CREACION'
-        | 'RECLASIFICACION'
-        | 'ASIGNACION'
-        | 'CAMBIO_ESTADO'
-        | 'ATENCION'
-        | 'APROBACION'
-        | 'DEVOLUCION';
-      readonly fecha: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly usuario_id: CodecTypes['pg/int4@1']['input'];
-    };
-    readonly usuario: {
-      readonly activo: CodecTypes['pg/bool@1']['input'];
-      readonly correo: CodecTypes['pg/text@1']['input'];
-      readonly id: CodecTypes['pg/int4@1']['input'];
-      readonly nombre: CodecTypes['pg/text@1']['input'];
-      readonly rol: 'SOLICITANTE' | 'AGENTE' | 'VALIDADOR' | 'ADMINISTRADOR';
+      readonly name: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly username: CodecTypes['pg/text@1']['input'] | null;
     };
   };
 };
 
 export namespace Models {
-  export type public_Area = {
-    activa: CodecTypes['pg/bool@1']['output'];
-    descripcion: CodecTypes['pg/text@1']['output'] | null;
+  export type public_Post = {
+    authorId: CodecTypes['pg/int4@1']['output'];
+    content: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
-    nombre: CodecTypes['pg/text@1']['output'];
-    readonly [RelationKeys]?: never;
+    title: CodecTypes['pg/text@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    author: public_User;
+    readonly [RelationKeys]?: 'author';
   };
-  export type public_Atencion = {
-    agenteId: CodecTypes['pg/int4@1']['output'];
-    casoId: CodecTypes['pg/int4@1']['output'];
-    diagnostico: CodecTypes['pg/text@1']['output'];
-    fecha: CodecTypes['pg/timestamptz-string@1']['output'];
+  export type public_User = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
-    solucion: CodecTypes['pg/text@1']['output'];
-    agente: public_Usuario;
-    caso: public_Caso;
-    readonly [RelationKeys]?: 'agente' | 'caso';
-  };
-  export type public_Caso = {
-    agenteId: CodecTypes['pg/int4@1']['output'] | null;
-    categoriaId: CodecTypes['pg/int4@1']['output'];
-    descripcion: CodecTypes['pg/text@1']['output'];
-    estado: 'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA';
-    fechaAsignacion: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-    fechaCierre: CodecTypes['pg/timestamptz-string@1']['output'] | null;
-    fechaCreacion: CodecTypes['pg/timestamptz-string@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    prioridad: 'P1' | 'P2' | 'P3';
-    solicitanteId: CodecTypes['pg/int4@1']['output'];
-    tipo: 'INCIDENTE' | 'SOLICITUD';
-    titulo: CodecTypes['pg/text@1']['output'];
-    agente: public_Usuario | null;
-    categoria: public_Categoria;
-    solicitante: public_Usuario;
-    readonly [RelationKeys]?: 'agente' | 'categoria' | 'solicitante';
-  };
-  export type public_Categoria = {
-    activa: CodecTypes['pg/bool@1']['output'];
-    areaId: CodecTypes['pg/int4@1']['output'];
-    descripcion: CodecTypes['pg/text@1']['output'] | null;
-    id: CodecTypes['pg/int4@1']['output'];
-    nombre: CodecTypes['pg/text@1']['output'];
-    area: public_Area;
-    readonly [RelationKeys]?: 'area';
-  };
-  export type public_Historial = {
-    casoId: CodecTypes['pg/int4@1']['output'];
-    comentario: CodecTypes['pg/text@1']['output'] | null;
-    estadoAnterior:
-      'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-    estadoNuevo: 'PENDIENTE' | 'EN_ANALISIS' | 'EN_ATENCION' | 'EN_VALIDACION' | 'CERRADA' | null;
-    evento:
-      | 'CREACION'
-      | 'RECLASIFICACION'
-      | 'ASIGNACION'
-      | 'CAMBIO_ESTADO'
-      | 'ATENCION'
-      | 'APROBACION'
-      | 'DEVOLUCION';
-    fecha: CodecTypes['pg/timestamptz-string@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    usuarioId: CodecTypes['pg/int4@1']['output'];
-    caso: public_Caso;
-    usuario: public_Usuario;
-    readonly [RelationKeys]?: 'caso' | 'usuario';
-  };
-  export type public_Usuario = {
-    activo: CodecTypes['pg/bool@1']['output'];
-    correo: CodecTypes['pg/text@1']['output'];
-    id: CodecTypes['pg/int4@1']['output'];
-    nombre: CodecTypes['pg/text@1']['output'];
-    rol: 'SOLICITANTE' | 'AGENTE' | 'VALIDADOR' | 'ADMINISTRADOR';
-    readonly [RelationKeys]?: never;
+    name: CodecTypes['pg/text@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    username: CodecTypes['pg/text@1']['output'] | null;
+    posts: public_Post[];
+    readonly [RelationKeys]?: 'posts';
   };
 }
 
 export declare const models: {
   public: {
-    Area: Models.public_Area;
-    Atencion: Models.public_Atencion;
-    Caso: Models.public_Caso;
-    Categoria: Models.public_Categoria;
-    Historial: Models.public_Historial;
-    Usuario: Models.public_Usuario;
+    Post: Models.public_Post;
+    User: Models.public_User;
   };
 };
 
@@ -614,21 +377,23 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
-            readonly area: {
+            readonly Post: {
               columns: {
-                readonly activa: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
+                readonly authorId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
                 };
-                readonly descripcion: {
+                readonly content: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                 };
                 readonly id: {
                   readonly nativeType: 'int4';
@@ -639,465 +404,84 @@ type ContractBase = Omit<
                     readonly expression: 'autoincrement()';
                   };
                 };
-                readonly nombre: {
+                readonly title: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['nombre'] }];
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Post_authorId_idx_e47547ed';
+                  readonly prefix: 'Post_authorId_idx';
+                  readonly columns: readonly ['authorId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Post';
+                    readonly columns: readonly ['authorId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly User: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly email: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+                readonly username: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['email'] }];
               indexes: readonly [];
               foreignKeys: readonly [];
-            };
-            readonly atencion: {
-              columns: {
-                readonly agente_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly caso_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly diagnostico: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly fecha: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly solucion: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'atencion_agente_id_idx_2dfdd41f';
-                  readonly prefix: 'atencion_agente_id_idx';
-                  readonly columns: readonly ['agente_id'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'atencion_caso_id_idx_75e3250f';
-                  readonly prefix: 'atencion_caso_id_idx';
-                  readonly columns: readonly ['caso_id'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'atencion';
-                    readonly columns: readonly ['caso_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'caso';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'atencion';
-                    readonly columns: readonly ['agente_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'usuario';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly caso: {
-              columns: {
-                readonly agente_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: true;
-                };
-                readonly categoria_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly descripcion: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly estado: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDIENTE'>;
-                  };
-                };
-                readonly fecha_asignacion: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: true;
-                };
-                readonly fecha_cierre: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: true;
-                };
-                readonly fecha_creacion: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly prioridad: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly tipo: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly titulo: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly usuario_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'caso_agente_id_idx_2dfdd41f';
-                  readonly prefix: 'caso_agente_id_idx';
-                  readonly columns: readonly ['agente_id'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'caso_categoria_id_idx_6ad70c39';
-                  readonly prefix: 'caso_categoria_id_idx';
-                  readonly columns: readonly ['categoria_id'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'caso_estado_idx_c74e5888';
-                  readonly prefix: 'caso_estado_idx';
-                  readonly columns: readonly ['estado'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'caso_usuario_id_idx_65b6616a';
-                  readonly prefix: 'caso_usuario_id_idx';
-                  readonly columns: readonly ['usuario_id'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'caso';
-                    readonly columns: readonly ['usuario_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'usuario';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'caso';
-                    readonly columns: readonly ['categoria_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'categoria';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'caso';
-                    readonly columns: readonly ['agente_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'usuario';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly categoria: {
-              columns: {
-                readonly activa: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly area_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly descripcion: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly nombre: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['area_id', 'nombre'] }];
-              indexes: readonly [
-                {
-                  readonly name: 'categoria_area_id_idx_106c7330';
-                  readonly prefix: 'categoria_area_id_idx';
-                  readonly columns: readonly ['area_id'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'categoria';
-                    readonly columns: readonly ['area_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'area';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly historial: {
-              columns: {
-                readonly caso_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly comentario: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly estado_anterior: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly estado_nuevo: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: true;
-                };
-                readonly evento: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly fecha: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly usuario_id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [];
-              indexes: readonly [
-                {
-                  readonly name: 'historial_caso_id_idx_75e3250f';
-                  readonly prefix: 'historial_caso_id_idx';
-                  readonly columns: readonly ['caso_id'];
-                  readonly unique: false;
-                },
-                {
-                  readonly name: 'historial_usuario_id_idx_65b6616a';
-                  readonly prefix: 'historial_usuario_id_idx';
-                  readonly columns: readonly ['usuario_id'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'historial';
-                    readonly columns: readonly ['caso_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'caso';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-                {
-                  readonly source: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'historial';
-                    readonly columns: readonly ['usuario_id'];
-                  };
-                  readonly target: {
-                    readonly namespaceId: 'public' & NamespaceId;
-                    readonly tableName: 'usuario';
-                    readonly columns: readonly ['id'];
-                  };
-                },
-              ];
-            };
-            readonly usuario: {
-              columns: {
-                readonly activo: {
-                  readonly nativeType: 'bool';
-                  readonly codecId: 'pg/bool@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
-                  };
-                };
-                readonly correo: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly id: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'function';
-                    readonly expression: 'autoincrement()';
-                  };
-                };
-                readonly nombre: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly rol: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['correo'] }];
-              indexes: readonly [];
-              foreignKeys: readonly [];
-            };
-          };
-          readonly valueSet: {
-            readonly EstadoCaso: {
-              readonly kind: 'valueSet';
-              readonly values: readonly [
-                'PENDIENTE',
-                'EN_ANALISIS',
-                'EN_ATENCION',
-                'EN_VALIDACION',
-                'CERRADA',
-              ];
-            };
-            readonly EventoHistorial: {
-              readonly kind: 'valueSet';
-              readonly values: readonly [
-                'CREACION',
-                'RECLASIFICACION',
-                'ASIGNACION',
-                'CAMBIO_ESTADO',
-                'ATENCION',
-                'APROBACION',
-                'DEVOLUCION',
-              ];
-            };
-            readonly Prioridad: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['P1', 'P2', 'P3'];
-            };
-            readonly Rol: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['SOLICITANTE', 'AGENTE', 'VALIDADOR', 'ADMINISTRADOR'];
-            };
-            readonly TipoCaso: {
-              readonly kind: 'valueSet';
-              readonly values: readonly ['INCIDENTE', 'SOLICITUD'];
             };
           };
         };
@@ -1110,63 +494,24 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
-    readonly area: { readonly namespace: 'public' & NamespaceId; readonly model: 'Area' };
-    readonly atencion: { readonly namespace: 'public' & NamespaceId; readonly model: 'Atencion' };
-    readonly caso: { readonly namespace: 'public' & NamespaceId; readonly model: 'Caso' };
-    readonly categoria: { readonly namespace: 'public' & NamespaceId; readonly model: 'Categoria' };
-    readonly historial: { readonly namespace: 'public' & NamespaceId; readonly model: 'Historial' };
-    readonly usuario: { readonly namespace: 'public' & NamespaceId; readonly model: 'Usuario' };
+    readonly Post: { readonly namespace: 'public' & NamespaceId; readonly model: 'Post' };
+    readonly User: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
-          readonly Area: {
+          readonly Post: {
             readonly fields: {
-              readonly activa: {
+              readonly authorId: {
                 readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly descripcion: {
+              readonly content: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly nombre: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-            };
-            readonly relations: Record<string, never>;
-            readonly storage: {
-              readonly table: 'area';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly activa: { readonly column: 'activa' };
-                readonly descripcion: { readonly column: 'descripcion' };
-                readonly id: { readonly column: 'id' };
-                readonly nombre: { readonly column: 'nombre' };
-              };
-            };
-          };
-          readonly Atencion: {
-            readonly fields: {
-              readonly agenteId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly casoId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly diagnostico: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly fecha: {
+              readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: 'scalar';
@@ -1177,369 +522,97 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
-              readonly solucion: {
+              readonly title: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly author: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['authorId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Post';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly authorId: { readonly column: 'authorId' };
+                readonly content: { readonly column: 'content' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly title: { readonly column: 'title' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly User: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly email: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly name: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly username: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
             };
             readonly relations: {
-              readonly agente: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Usuario';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
+              readonly posts: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Post' };
+                readonly cardinality: '1:N';
                 readonly on: {
-                  readonly localFields: readonly ['agenteId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly caso: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Caso' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['casoId'];
-                  readonly targetFields: readonly ['id'];
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['authorId'];
                 };
               };
             };
             readonly storage: {
-              readonly table: 'atencion';
+              readonly table: 'User';
               readonly namespaceId: 'public';
               readonly fields: {
-                readonly agenteId: { readonly column: 'agente_id' };
-                readonly casoId: { readonly column: 'caso_id' };
-                readonly diagnostico: { readonly column: 'diagnostico' };
-                readonly fecha: { readonly column: 'fecha' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
-                readonly solucion: { readonly column: 'solucion' };
+                readonly name: { readonly column: 'name' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly username: { readonly column: 'username' };
               };
             };
-          };
-          readonly Caso: {
-            readonly fields: {
-              readonly agenteId: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly categoriaId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly descripcion: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly estado: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly fechaAsignacion: {
-                readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly fechaCierre: {
-                readonly nullable: true;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly fechaCreacion: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly prioridad: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly solicitanteId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly tipo: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly titulo: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-            };
-            readonly relations: {
-              readonly agente: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Usuario';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: true;
-                readonly on: {
-                  readonly localFields: readonly ['agenteId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly categoria: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Categoria';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['categoriaId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly solicitante: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Usuario';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['solicitanteId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'caso';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly agenteId: { readonly column: 'agente_id' };
-                readonly categoriaId: { readonly column: 'categoria_id' };
-                readonly descripcion: { readonly column: 'descripcion' };
-                readonly estado: { readonly column: 'estado' };
-                readonly fechaAsignacion: { readonly column: 'fecha_asignacion' };
-                readonly fechaCierre: { readonly column: 'fecha_cierre' };
-                readonly fechaCreacion: { readonly column: 'fecha_creacion' };
-                readonly id: { readonly column: 'id' };
-                readonly prioridad: { readonly column: 'prioridad' };
-                readonly solicitanteId: { readonly column: 'usuario_id' };
-                readonly tipo: { readonly column: 'tipo' };
-                readonly titulo: { readonly column: 'titulo' };
-              };
-            };
-          };
-          readonly Categoria: {
-            readonly fields: {
-              readonly activa: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly areaId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly descripcion: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly nombre: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-            };
-            readonly relations: {
-              readonly area: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Area' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['areaId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'categoria';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly activa: { readonly column: 'activa' };
-                readonly areaId: { readonly column: 'area_id' };
-                readonly descripcion: { readonly column: 'descripcion' };
-                readonly id: { readonly column: 'id' };
-                readonly nombre: { readonly column: 'nombre' };
-              };
-            };
-          };
-          readonly Historial: {
-            readonly fields: {
-              readonly casoId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly comentario: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly estadoAnterior: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly estadoNuevo: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly evento: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly fecha: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly usuarioId: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-            };
-            readonly relations: {
-              readonly caso: {
-                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Caso' };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['casoId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-              readonly usuario: {
-                readonly to: {
-                  readonly namespace: 'public' & NamespaceId;
-                  readonly model: 'Usuario';
-                };
-                readonly cardinality: 'N:1';
-                readonly nullable: false;
-                readonly on: {
-                  readonly localFields: readonly ['usuarioId'];
-                  readonly targetFields: readonly ['id'];
-                };
-              };
-            };
-            readonly storage: {
-              readonly table: 'historial';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly casoId: { readonly column: 'caso_id' };
-                readonly comentario: { readonly column: 'comentario' };
-                readonly estadoAnterior: { readonly column: 'estado_anterior' };
-                readonly estadoNuevo: { readonly column: 'estado_nuevo' };
-                readonly evento: { readonly column: 'evento' };
-                readonly fecha: { readonly column: 'fecha' };
-                readonly id: { readonly column: 'id' };
-                readonly usuarioId: { readonly column: 'usuario_id' };
-              };
-            };
-          };
-          readonly Usuario: {
-            readonly fields: {
-              readonly activo: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
-              };
-              readonly correo: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly nombre: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly rol: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-            };
-            readonly relations: Record<string, never>;
-            readonly storage: {
-              readonly table: 'usuario';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly activo: { readonly column: 'activo' };
-                readonly correo: { readonly column: 'correo' };
-                readonly id: { readonly column: 'id' };
-                readonly nombre: { readonly column: 'nombre' };
-                readonly rol: { readonly column: 'rol' };
-              };
-            };
-          };
-        };
-        readonly enum: {
-          readonly EstadoCaso: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'PENDIENTE'; readonly value: 'PENDIENTE' },
-              { readonly name: 'EN_ANALISIS'; readonly value: 'EN_ANALISIS' },
-              { readonly name: 'EN_ATENCION'; readonly value: 'EN_ATENCION' },
-              { readonly name: 'EN_VALIDACION'; readonly value: 'EN_VALIDACION' },
-              { readonly name: 'CERRADA'; readonly value: 'CERRADA' },
-            ];
-          };
-          readonly EventoHistorial: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'CREACION'; readonly value: 'CREACION' },
-              { readonly name: 'RECLASIFICACION'; readonly value: 'RECLASIFICACION' },
-              { readonly name: 'ASIGNACION'; readonly value: 'ASIGNACION' },
-              { readonly name: 'CAMBIO_ESTADO'; readonly value: 'CAMBIO_ESTADO' },
-              { readonly name: 'ATENCION'; readonly value: 'ATENCION' },
-              { readonly name: 'APROBACION'; readonly value: 'APROBACION' },
-              { readonly name: 'DEVOLUCION'; readonly value: 'DEVOLUCION' },
-            ];
-          };
-          readonly Prioridad: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'P1'; readonly value: 'P1' },
-              { readonly name: 'P2'; readonly value: 'P2' },
-              { readonly name: 'P3'; readonly value: 'P3' },
-            ];
-          };
-          readonly Rol: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'SOLICITANTE'; readonly value: 'SOLICITANTE' },
-              { readonly name: 'AGENTE'; readonly value: 'AGENTE' },
-              { readonly name: 'VALIDADOR'; readonly value: 'VALIDADOR' },
-              { readonly name: 'ADMINISTRADOR'; readonly value: 'ADMINISTRADOR' },
-            ];
-          };
-          readonly TipoCaso: {
-            readonly codecId: 'pg/text@1';
-            readonly members: readonly [
-              { readonly name: 'INCIDENTE'; readonly value: 'INCIDENTE' },
-              { readonly name: 'SOLICITUD'; readonly value: 'SOLICITUD' },
-            ];
           };
         };
       };
@@ -1566,6 +639,31 @@ type ContractBase = Omit<
     };
   };
   readonly extensions: {};
+  readonly execution: {
+    readonly executionHash: ExecutionHash;
+    readonly mutations: {
+      readonly defaults: readonly [
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'Post';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly column: 'updatedAt';
+            readonly namespace: 'public';
+            readonly table: 'User';
+          };
+        },
+      ];
+    };
+  };
   readonly meta: {};
 
   readonly profileHash: ProfileHash;
