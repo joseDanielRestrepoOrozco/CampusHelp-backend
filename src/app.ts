@@ -6,6 +6,7 @@ import { env } from './config/env.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { notFoundHandler } from './middleware/not-found-handler.js';
 import { userRouter } from './routes/user.routes.js';
+import { catalogosRouter } from './routes/catalogos.routes.js';
 import { casosRouter } from './routes/casos.routes.js';
 
 const app = express();
@@ -33,6 +34,7 @@ app.use(
 app.use(express.json({ limit: '16kb' }));
 
 app.use('/users', userRouter);
+app.use('/api', catalogosRouter);
 app.use('/api', casosRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);

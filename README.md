@@ -11,8 +11,9 @@ API REST pequeña con Express 5, TypeScript y Prisma ORM para PostgreSQL.
 
 1. Copia `.env.example` a `.env` y configura `DATABASE_URL`.
 2. Inicia PostgreSQL localmente con `docker compose up -d postgres` si lo necesitas.
-3. Inicializa/actualiza la base de datos según el flujo de Prisma ORM del proyecto.
-4. Ejecuta `npm run dev`.
+3. Inicializa/actualiza la base de datos según el flujo de Prisma ORM del proyecto (`npx prisma db migrate`).
+4. Carga los datos semilla de áreas, categorías y usuarios de prueba ejecutando `npm run seed`.
+5. Ejecuta `npm run dev`.
 
 `ALLOWED_ORIGINS` es opcional y acepta orígenes separados por comas. Si no se define, no se envían cabeceras CORS.
 
@@ -21,6 +22,7 @@ API REST pequeña con Express 5, TypeScript y Prisma ORM para PostgreSQL.
 - `npm run dev` — servidor de desarrollo con recarga.
 - `npm run build` — compila TypeScript a `dist/`.
 - `npm start` — inicia la compilación.
+- `npm run seed` — inserta o actualiza las áreas, categorías y usuarios de prueba en la base de datos (idempotente).
 - `npm run contract:emit` — regenera los artefactos del contrato Prisma.
 
 ## Estructura
