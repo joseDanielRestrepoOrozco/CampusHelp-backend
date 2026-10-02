@@ -17,7 +17,7 @@ export class CategoriasRepository {
       'nombre',
       'descripcion',
       'activa',
-    ).orderBy(categoria => categoria.id.asc());
+    ).orderBy(categoria => categoria.nombre.asc());
 
     if (filtros?.areaId !== undefined) {
       query = query.where({ areaId: filtros.areaId });

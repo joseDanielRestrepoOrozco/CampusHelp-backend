@@ -15,13 +15,9 @@ export class UsuariosRepository {
   }
 
   async listar(filtros?: FiltrosUsuario): Promise<UsuarioAutenticado[]> {
-    let query = db.orm.public.Usuario.select('id', 'nombre', 'correo', 'rol', 'activo').orderBy(
-      usuario => usuario.id.asc(),
-    );
-
-    if (filtros?.activo !== undefined) {
-      query = query.where({ activo: filtros.activo });
-    }
+    let query = db.orm.public.Usuario.select('id', 'nombre', 'correo', 'rol', 'activo')
+      .where({ activo: true })
+      .orderBy(usuario => usuario.id.asc());
 
     if (filtros?.rol !== undefined) {
       query = query.where({ rol: filtros.rol });

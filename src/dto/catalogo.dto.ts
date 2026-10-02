@@ -14,7 +14,6 @@ export interface AreaDto {
   id: number;
   nombre: string;
   descripcion: string | null;
-  activa: boolean;
 }
 
 export interface CategoriaDto {
@@ -40,7 +39,6 @@ export function aAreaDto(area: AreaRecord): AreaDto {
     id: area.id,
     nombre: area.nombre,
     descripcion: area.descripcion,
-    activa: area.activa,
   };
 }
 
