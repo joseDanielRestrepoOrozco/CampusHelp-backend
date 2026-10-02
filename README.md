@@ -31,8 +31,9 @@ API REST pequeña con Express 5, TypeScript y Prisma ORM para PostgreSQL.
 - `src/schemas` — validación de entradas con Zod y tipos inferidos.
 - `src/middleware` — seguridad, errores y rutas inexistentes.
 - `src/config` — configuración validada desde el entorno.
+- `src/services` — reglas de negocio que coordinan más de un repositorio.
 
-Los controladores usan el repositorio directamente mientras no haya lógica de negocio que justifique un servicio intermedio. Si aparecen reglas de negocio o coordinación entre dependencias, esa capa se puede añadir entonces.
+La capa de servicio aparece cuando hay reglas de negocio que no le corresponden a una sola consulta: ahí se validan las reglas y se decide el error; el repositorio solo accede a datos. Los endpoints sin reglas de negocio (como los de usuarios) siguen hablando directo con el repositorio.
 
 La limitación de solicitudes usa almacenamiento en memoria y sirve para una sola instancia. En despliegues con varias instancias, debe configurarse un store compartido. `docker-compose.yml` es solo para desarrollo local; las credenciales de ejemplo no deben usarse en producción.
 

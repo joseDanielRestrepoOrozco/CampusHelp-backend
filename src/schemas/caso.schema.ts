@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_ID_INT32 } from '../constants.js';
 
 export const tipoCasoSchema = z.enum(['INCIDENTE', 'SOLICITUD'], {
   error: "El campo 'tipo' debe ser INCIDENTE o SOLICITUD",
@@ -16,6 +17,16 @@ export const estadoCasoSchema = z.enum([
   'CERRADA',
 ]);
 
+// Un id referencia (área o categoría) es un entero positivo dentro del rango de
+// int4 de Postgres. Sin el tope, un id gigante pasa el esquema y la consulta
+// falla con 500 en lugar de responder 400 VALIDACION.
+const idReferencia = (campo: string) =>
+  z
+    .number({ error: `El campo '${campo}' es obligatorio` })
+    .int(`El campo '${campo}' debe ser un entero`)
+    .positive(`El campo '${campo}' debe ser mayor que cero`)
+    .max(MAX_ID_INT32, `El campo '${campo}' no corresponde a un registro existente`);
+
 export const createCasoSchema = z.object({
   tipo: tipoCasoSchema,
   titulo: z
@@ -28,8 +39,8 @@ export const createCasoSchema = z.object({
     .trim()
     .min(10, 'La descripción debe tener al menos 10 caracteres'),
   prioridad: prioridadSchema,
-  areaId: z.number({ error: "El campo 'areaId' es obligatorio" }).int().positive(),
-  categoriaId: z.number({ error: "El campo 'categoriaId' es obligatorio" }).int().positive(),
+  areaId: idReferencia('areaId'),
+  categoriaId: idReferencia('categoriaId'),
 });
 
 export type CreateCasoInput = z.infer<typeof createCasoSchema>;
