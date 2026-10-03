@@ -1,10 +1,23 @@
+// Lista cerrada de códigos del contrato (docs/03-api.md, sección "Errores").
+// El frontend decide qué mostrar según el código: no se inventan códigos nuevos
+// sin agregarlos primero al contrato.
 export type ErrorCode =
   | 'VALIDACION'
   | 'USUARIO_REQUERIDO'
   | 'ROL_NO_PERMITIDO'
-  | 'CATEGORIA_INVALIDA'
-  | 'CONFLICTO'
+  | 'NO_ES_AGENTE_ASIGNADO'
+  | 'CASO_AJENO'
   | 'NO_ENCONTRADO'
+  | 'CATEGORIA_INVALIDA'
+  | 'TRANSICION_INVALIDA'
+  | 'CASO_CERRADO'
+  | 'ESTADO_NO_PERMITE_OPERACION'
+  | 'SIN_AGENTE_ASIGNADO'
+  | 'SIN_SOLUCION'
+  | 'AGENTE_INVALIDO'
+  | 'VALIDADOR_ES_AGENTE'
+  | 'CATEGORIA_DUPLICADA'
+  | 'CATEGORIA_CON_CASOS'
   | 'ERROR_INTERNO';
 
 export interface DetalleError {
