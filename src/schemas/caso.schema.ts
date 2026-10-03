@@ -44,3 +44,26 @@ export const createCasoSchema = z.object({
 });
 
 export type CreateCasoInput = z.infer<typeof createCasoSchema>;
+
+// Por ahora solo `fecha_desc`; el orden por prioridad llega con la bandeja (#15).
+export const ordenCasosSchema = z.enum(['fecha_desc'], {
+  error: "El parámetro 'orden' solo admite fecha_desc",
+});
+
+// Query params de GET /api/casos. Llegan como texto, por eso el id se convierte
+// antes de validarlo con el mismo rango que el resto de ids (int4).
+export const listarCasosQuerySchema = z.object({
+  solicitanteId: z
+    .preprocess(
+      val => (val === undefined || val === '' ? undefined : Number(val)),
+      z
+        .number({ error: "El parámetro 'solicitanteId' debe ser un número" })
+        .int("El parámetro 'solicitanteId' debe ser un entero")
+        .positive("El parámetro 'solicitanteId' debe ser mayor que cero")
+        .max(MAX_ID_INT32, "El parámetro 'solicitanteId' excede el rango permitido"),
+    )
+    .optional(),
+  orden: ordenCasosSchema.default('fecha_desc'),
+});
+
+export type ListarCasosQuery = z.infer<typeof listarCasosQuerySchema>;

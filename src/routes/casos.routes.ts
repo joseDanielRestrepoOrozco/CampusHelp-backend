@@ -7,3 +7,4 @@ export const casosRouter = Router();
 const autenticar = usuarioActual(container.usuariosRepository);
 
 casosRouter.post('/casos', autenticar, container.casosController.crear);
+casosRouter.get('/casos', autenticar, container.casosController.listar);
