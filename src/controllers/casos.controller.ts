@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { UnauthorizedError } from '../errors/app-error.js';
 import { parseWithSchema } from '../schemas/parse.js';
-import { createCasoSchema } from '../schemas/caso.schema.js';
+import { createCasoSchema, listarCasosQuerySchema } from '../schemas/caso.schema.js';
 import type { CasosService } from '../services/casos.service.js';
 
 export class CasosController {
@@ -17,5 +17,17 @@ export class CasosController {
     const caso = await this.casos.registrarCaso(request.usuario, input);
 
     response.status(201).json(caso);
+  };
+
+  // GET /api/casos (HU-02)
+  listar = async (request: Request, response: Response): Promise<void> => {
+    if (!request.usuario) {
+      throw new UnauthorizedError();
+    }
+
+    const query = parseWithSchema(listarCasosQuerySchema, request.query, 'query');
+    const casos = await this.casos.listarCasos(request.usuario, query);
+
+    response.json(casos);
   };
 }
