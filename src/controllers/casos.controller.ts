@@ -1,7 +1,12 @@
 import type { Request, Response } from 'express';
 import { UnauthorizedError } from '../errors/app-error.js';
 import { parseWithSchema } from '../schemas/parse.js';
-import { createCasoSchema, listarCasosQuerySchema } from '../schemas/caso.schema.js';
+import {
+  createCasoSchema,
+  casoIdParamsSchema,
+  cambiarEstadoSchema,
+  listarCasosQuerySchema,
+} from '../schemas/caso.schema.js';
 import type { CasosService } from '../services/casos.service.js';
 
 export class CasosController {
@@ -29,5 +34,17 @@ export class CasosController {
     const casos = await this.casos.listarCasos(request.usuario, query);
 
     response.json(casos);
+  };
+
+  // PATCH /api/casos/:id/estado (HU-05)
+  cambiarEstado = async (request: Request, response: Response): Promise<void> => {
+    const usuario = request.usuario!;
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const { estado } = parseWithSchema(cambiarEstadoSchema, request.body, 'body');
+
+    const caso = await this.casos.cambiarEstado(usuario, id, estado);
+
+    response.json(caso);
   };
 }

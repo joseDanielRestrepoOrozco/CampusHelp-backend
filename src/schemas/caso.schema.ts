@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { MAX_ID_INT32 } from '../constants.js';
+import { idPathParam } from './param.schema.js';
 
 export const tipoCasoSchema = z.enum(['INCIDENTE', 'SOLICITUD'], {
   error: "El campo 'tipo' debe ser INCIDENTE o SOLICITUD",
@@ -9,13 +10,13 @@ export const prioridadSchema = z.enum(['P1', 'P2', 'P3'], {
   error: 'La prioridad es obligatoria y solo puede ser P1, P2 o P3',
 });
 
-export const estadoCasoSchema = z.enum([
-  'PENDIENTE',
-  'EN_ANALISIS',
-  'EN_ATENCION',
-  'EN_VALIDACION',
-  'CERRADA',
-]);
+export const estadoCasoSchema = z.enum(
+  ['PENDIENTE', 'EN_ANALISIS', 'EN_ATENCION', 'EN_VALIDACION', 'CERRADA'],
+  {
+    error:
+      "El campo 'estado' debe ser PENDIENTE, EN_ANALISIS, EN_ATENCION, EN_VALIDACION o CERRADA",
+  },
+);
 
 // Un id referencia (área o categoría) es un entero positivo dentro del rango de
 // int4 de Postgres. Sin el tope, un id gigante pasa el esquema y la consulta
@@ -44,6 +45,16 @@ export const createCasoSchema = z.object({
 });
 
 export type CreateCasoInput = z.infer<typeof createCasoSchema>;
+
+// Path param de /casos/:id y de sus subrutas (#18, #25, #29, #33). El validador
+// genérico de ids vive en param.schema.ts.
+export const casoIdParamsSchema = z.object({ id: idPathParam('id') });
+
+// Body de PATCH /casos/:id/estado (HU-05). Solo se mueve el estado; si no es un
+// valor del enum la respuesta es 400 VALIDACION desde el esquema.
+export const cambiarEstadoSchema = z.object({
+  estado: estadoCasoSchema,
+});
 
 // Por ahora solo `fecha_desc`; el orden por prioridad llega con la bandeja (#15).
 export const ordenCasosSchema = z.enum(['fecha_desc'], {
