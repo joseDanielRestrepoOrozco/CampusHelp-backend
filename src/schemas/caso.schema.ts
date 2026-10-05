@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { MAX_ID_INT32 } from '../constants.js';
+import { booleanoQuery, idQuery } from './query.schema.js';
 
 export const tipoCasoSchema = z.enum(['INCIDENTE', 'SOLICITUD'], {
   error: "El campo 'tipo' debe ser INCIDENTE o SOLICITUD",
@@ -45,24 +46,17 @@ export const createCasoSchema = z.object({
 
 export type CreateCasoInput = z.infer<typeof createCasoSchema>;
 
-// Por ahora solo `fecha_desc`; el orden por prioridad llega con la bandeja (#15).
-export const ordenCasosSchema = z.enum(['fecha_desc'], {
-  error: "El parámetro 'orden' solo admite fecha_desc",
+// Ordenamiento de casos: fecha_desc por defecto o por prioridad (HU-03).
+export const ordenCasosSchema = z.enum(['fecha_desc', 'prioridad'], {
+  error: "El parámetro 'orden' solo admite fecha_desc o prioridad",
 });
 
-// Query params de GET /api/casos. Llegan como texto, por eso el id se convierte
-// antes de validarlo con el mismo rango que el resto de ids (int4).
+// Query params de GET /api/casos (HU-02 y HU-03).
 export const listarCasosQuerySchema = z.object({
-  solicitanteId: z
-    .preprocess(
-      val => (val === undefined || val === '' ? undefined : Number(val)),
-      z
-        .number({ error: "El parámetro 'solicitanteId' debe ser un número" })
-        .int("El parámetro 'solicitanteId' debe ser un entero")
-        .positive("El parámetro 'solicitanteId' debe ser mayor que cero")
-        .max(MAX_ID_INT32, "El parámetro 'solicitanteId' excede el rango permitido"),
-    )
-    .optional(),
+  solicitanteId: idQuery('solicitanteId'),
+  agenteId: idQuery('agenteId'),
+  abiertos: booleanoQuery('abiertos'),
+  sinAgente: booleanoQuery('sinAgente'),
   orden: ordenCasosSchema.default('fecha_desc'),
 });
 

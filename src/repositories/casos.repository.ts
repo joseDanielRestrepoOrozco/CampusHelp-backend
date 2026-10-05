@@ -17,9 +17,12 @@ export type CasoConRelaciones = ResultType<ReturnType<typeof consultaCasoConRela
 // El caso guarda la categoría pero no el área: el área sale de la categoría (RN-03).
 export type DatosCaso = Omit<CreateCasoInput, 'areaId'>;
 
-// Filtros de GET /api/casos. La bandeja (#15) y los filtros (#41) los amplían.
+// Filtros de GET /api/casos (HU-02 y HU-03).
 export interface FiltrosCaso {
   solicitanteId?: number;
+  agenteId?: number;
+  abiertos?: boolean;
+  sinAgente?: boolean;
   orden: ListarCasosQuery['orden'];
 }
 
@@ -60,6 +63,27 @@ export class CasosRepository {
 
     if (filtros.solicitanteId !== undefined) {
       query = query.where({ solicitanteId: filtros.solicitanteId });
+    }
+
+    if (filtros.sinAgente) {
+      query = query.where(caso => caso.agenteId.isNull());
+    } else if (filtros.agenteId !== undefined) {
+      query = query.where({ agenteId: filtros.agenteId });
+    }
+
+    if (filtros.abiertos) {
+      query = query.where(caso => caso.estado.neq('CERRADA'));
+    }
+
+    if (filtros.orden === 'prioridad') {
+      // Prioridad: P1 primero, luego P2, luego P3; más antiguos primero para atender lo que más espera (CP-13).
+      return query
+        .orderBy([
+          caso => caso.prioridad.asc(),
+          caso => caso.fechaCreacion.asc(),
+          caso => caso.id.asc(),
+        ])
+        .all();
     }
 
     // fecha_desc: más recientes primero; el id desempata casos con la misma fecha.
