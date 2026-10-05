@@ -39,13 +39,19 @@ export class CasosService {
     return aCasoDto(caso);
   }
 
-  // HU-02: consultar casos.
+  // HU-02 / HU-03: consultar casos y bandeja de trabajo.
   async listarCasos(usuario: UsuarioAutenticado, query: ListarCasosQuery): Promise<CasoDto[]> {
     // RN-20: un solicitante solo ve sus propios casos, aunque pida los de otro.
     // Los demás roles ven todos y pueden filtrar por solicitante.
     const solicitanteId = usuario.rol === 'SOLICITANTE' ? usuario.id : query.solicitanteId;
 
-    const casos = await this.casos.listar({ solicitanteId, orden: query.orden });
+    const casos = await this.casos.listar({
+      solicitanteId,
+      agenteId: query.agenteId,
+      abiertos: query.abiertos,
+      sinAgente: query.sinAgente,
+      orden: query.orden,
+    });
     return casos.map(aCasoDto);
   }
 
