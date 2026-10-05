@@ -35,6 +35,7 @@ Todas las rutas van bajo `/api`. Las de `/casos` exigen la cabecera `X-Usuario-I
 | GET | `/api/areas` | HU-01 |
 | GET | `/api/categorias?areaId=&activa=` | HU-01 |
 | POST | `/api/casos` | HU-01 |
+| PATCH | `/api/casos/:id/estado` | HU-05 (solo AGENTE; la tabla de transiciones vive en `src/domain/estados.ts`) |
 
 ## Estructura
 
@@ -45,7 +46,8 @@ Cada entidad tiene sus propios archivos en cada capa (`usuarios`, `areas`, `cate
 - `src/services` — reglas de negocio. Solo existen cuando hay reglas (por ahora, casos).
 - `src/repositories` — acceso a datos con Prisma ORM. Un repositorio por tabla.
 - `src/dto` — forma exacta en que cada recurso sale en el JSON, según el contrato.
-- `src/schemas` — validación de entradas con Zod. Los validadores de query compartidos están en `query.schema.ts`.
+- `src/schemas` — validación de entradas con Zod. Los validadores compartidos están en `query.schema.ts` (query) y `param.schema.ts` (`:id` de la ruta).
+- `src/domain` — reglas del dominio que varios endpoints comparten. Hoy, la tabla de transiciones de estado del caso y su validación.
 - `src/middleware` — usuario actual (`X-Usuario-Id`), errores y rutas inexistentes.
 - `src/errors` — `AppError` y la lista cerrada de códigos de error del contrato.
 - `src/config` — configuración validada desde el entorno.
