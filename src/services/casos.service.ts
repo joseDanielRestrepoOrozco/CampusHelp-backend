@@ -1,4 +1,5 @@
-import { AppError, ConflictError, ForbiddenError } from '../errors/app-error.js';
+import { AppError, ConflictError, ForbiddenError, NotFoundError } from '../errors/app-error.js';
+import { validarTransicion, type EstadoCaso } from '../domain/estados.js';
 import { aCasoDto, type CasoDto } from '../dto/caso.dto.js';
 import type { CreateCasoInput, ListarCasosQuery } from '../schemas/caso.schema.js';
 import type { CasosRepository } from '../repositories/casos.repository.js';
@@ -38,13 +39,48 @@ export class CasosService {
     return aCasoDto(caso);
   }
 
-  // HU-02: consultar casos.
+  // HU-02 / HU-03: consultar casos y bandeja de trabajo.
   async listarCasos(usuario: UsuarioAutenticado, query: ListarCasosQuery): Promise<CasoDto[]> {
     // RN-20: un solicitante solo ve sus propios casos, aunque pida los de otro.
     // Los demás roles ven todos y pueden filtrar por solicitante.
     const solicitanteId = usuario.rol === 'SOLICITANTE' ? usuario.id : query.solicitanteId;
 
-    const casos = await this.casos.listar({ solicitanteId, orden: query.orden });
+    const casos = await this.casos.listar({
+      solicitanteId,
+      agenteId: query.agenteId,
+      abiertos: query.abiertos,
+      sinAgente: query.sinAgente,
+      orden: query.orden,
+    });
     return casos.map(aCasoDto);
+  }
+
+  // HU-05: cambiar el estado del caso.
+  async cambiarEstado(
+    usuario: UsuarioAutenticado,
+    casoId: number,
+    estadoNuevo: EstadoCaso,
+  ): Promise<CasoDto> {
+    // Solo el agente mueve el caso por esta ruta; el cierre es del validador (#33).
+    if (usuario.rol !== 'AGENTE') {
+      throw new ForbiddenError(
+        'ROL_NO_PERMITIDO',
+        'Solo los agentes pueden cambiar el estado de un caso',
+      );
+    }
+
+    const caso = await this.casos.buscarPorId(casoId);
+    if (!caso) {
+      throw new NotFoundError('El caso no existe');
+    }
+
+    // RN-09, RN-10 y RN-14: la tabla de transiciones vive en src/domain/estados.ts.
+    validarTransicion(caso, estadoNuevo, 'manual');
+
+    await this.casos.cambiarEstado(casoId, caso.estado, estadoNuevo, usuario.id);
+
+    // Dentro de la transacción solo cambia `estado`: el resto de columnas y las
+    // relaciones ya se leyeron, así que no hace falta volver a consultar el caso.
+    return aCasoDto({ ...caso, estado: estadoNuevo });
   }
 }

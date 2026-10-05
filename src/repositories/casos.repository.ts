@@ -1,5 +1,7 @@
 import { db } from '../prisma/db.js';
 import type { ResultType } from '@prisma/orm-postgres/components/runtime';
+import type { EstadoCaso } from '../domain/estados.js';
+import { ConflictError } from '../errors/app-error.js';
 import type { CreateCasoInput, ListarCasosQuery } from '../schemas/caso.schema.js';
 import type { HistorialRepository } from './historial.repository.js';
 
@@ -17,9 +19,12 @@ export type CasoConRelaciones = ResultType<ReturnType<typeof consultaCasoConRela
 // El caso guarda la categoría pero no el área: el área sale de la categoría (RN-03).
 export type DatosCaso = Omit<CreateCasoInput, 'areaId'>;
 
-// Filtros de GET /api/casos. La bandeja (#15) y los filtros (#41) los amplían.
+// Filtros de GET /api/casos (HU-02 y HU-03).
 export interface FiltrosCaso {
   solicitanteId?: number;
+  agenteId?: number;
+  abiertos?: boolean;
+  sinAgente?: boolean;
   orden: ListarCasosQuery['orden'];
 }
 
@@ -55,11 +60,69 @@ export class CasosRepository {
     return consultaCasoConRelaciones(id).first();
   }
 
+  // El cambio de estado y su evento se escriben en la misma transacción: si el
+  // historial falla, el estado tampoco queda (RN-17).
+  //
+  // El `where` exige que el caso siga en `estadoAnterior`. Dos peticiones
+  // simultáneas sobre el mismo caso pasaron la validación con la misma lectura:
+  // la segunda no encuentra la fila, no cambia nada y responde 409 en vez de
+  // duplicar el evento. `fechaCierre` no se toca: cerrar solo lo hace la
+  // validación (#33).
+  async cambiarEstado(
+    casoId: number,
+    estadoAnterior: EstadoCaso,
+    estadoNuevo: EstadoCaso,
+    usuarioId: number,
+  ): Promise<void> {
+    await db.transaction(async tx => {
+      const actualizado = await tx.orm.public.Caso.where({
+        id: casoId,
+        estado: estadoAnterior,
+      }).update({ estado: estadoNuevo });
+
+      if (!actualizado) {
+        throw new ConflictError(
+          'TRANSICION_INVALIDA',
+          'El caso cambió de estado mientras se procesaba la petición; inténtalo de nuevo',
+        );
+      }
+
+      await this.historial.registrarEvento(tx, {
+        casoId,
+        evento: 'CAMBIO_ESTADO',
+        estadoAnterior,
+        estadoNuevo,
+        usuarioId,
+      });
+    });
+  }
+
   async listar(filtros: FiltrosCaso): Promise<CasoConRelaciones[]> {
     let query = casosConRelaciones();
 
     if (filtros.solicitanteId !== undefined) {
       query = query.where({ solicitanteId: filtros.solicitanteId });
+    }
+
+    if (filtros.sinAgente) {
+      query = query.where(caso => caso.agenteId.isNull());
+    } else if (filtros.agenteId !== undefined) {
+      query = query.where({ agenteId: filtros.agenteId });
+    }
+
+    if (filtros.abiertos) {
+      query = query.where(caso => caso.estado.neq('CERRADA'));
+    }
+
+    if (filtros.orden === 'prioridad') {
+      // Prioridad: P1 primero, luego P2, luego P3; más antiguos primero para atender lo que más espera (CP-13).
+      return query
+        .orderBy([
+          caso => caso.prioridad.asc(),
+          caso => caso.fechaCreacion.asc(),
+          caso => caso.id.asc(),
+        ])
+        .all();
     }
 
     // fecha_desc: más recientes primero; el id desempata casos con la misma fecha.
