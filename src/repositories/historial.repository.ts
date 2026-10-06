@@ -1,3 +1,5 @@
+import { db } from '../prisma/db.js';
+import type { ResultType } from '@prisma/orm-postgres/components/runtime';
 import type { Models } from '../prisma/contract.js';
 import type { TransactionContext } from '../prisma/transaction.js';
 
@@ -9,6 +11,15 @@ export interface RegistrarEventoData {
   usuarioId: number;
   comentario?: string | null;
 }
+
+// HU-08: el evento con el usuario que lo generó. Solo id, nombre y rol, que es
+// lo que pide el contrato; el correo y el activo no se exponen.
+const historialConUsuario = () =>
+  db.orm.public.Historial.include('usuario', usuario => usuario.select('id', 'nombre', 'rol'));
+
+const consultaHistorialDeCaso = (casoId: number) => historialConUsuario().where({ casoId });
+
+export type HistorialConUsuario = ResultType<ReturnType<typeof consultaHistorialDeCaso>>;
 
 export class HistorialRepository {
   // RN-17: registra un evento del historial dentro de la transacción recibida.
@@ -22,5 +33,13 @@ export class HistorialRepository {
       usuarioId: data.usuarioId,
       comentario: data.comentario ?? null,
     });
+  }
+
+  // HU-08: historial de un caso en orden cronológico ascendente (el más viejo
+  // primero). El id desempata eventos escritos en el mismo instante.
+  async listarPorCaso(casoId: number): Promise<HistorialConUsuario[]> {
+    return consultaHistorialDeCaso(casoId)
+      .orderBy([evento => evento.fecha.asc(), evento => evento.id.asc()])
+      .all();
   }
 }
