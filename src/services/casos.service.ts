@@ -1,8 +1,13 @@
 import { AppError, ConflictError, ForbiddenError, NotFoundError } from '../errors/app-error.js';
 import { validarTransicion, type EstadoCaso } from '../domain/estados.js';
 import { aCasoDto, type CasoDto } from '../dto/caso.dto.js';
+import type {
+  CreateCasoInput,
+  ListarCasosQuery,
+  ReclasificarCasoInput,
+} from '../schemas/caso.schema.js';
+import type { CambiosClasificacion, CasosRepository } from '../repositories/casos.repository.js';
 import { aHistorialDto, type HistorialDto } from '../dto/historial.dto.js';
-import type { CreateCasoInput, ListarCasosQuery } from '../schemas/caso.schema.js';
 import type { CasosRepository } from '../repositories/casos.repository.js';
 import type { HistorialRepository } from '../repositories/historial.repository.js';
 import type { UsuarioAutenticado } from '../repositories/usuarios.repository.js';
@@ -89,6 +94,13 @@ export class CasosService {
     return aCasoDto({ ...caso, estado: estadoNuevo });
   }
 
+  // HU-05: el agente corrige tipo, prioridad o categoría (clasificar y priorizar).
+  // Orden de errores del contrato: 404 → 403 → 409.
+  async reclasificarCaso(
+    usuario: UsuarioAutenticado,
+    casoId: number,
+    input: ReclasificarCasoInput,
+  ): Promise<CasoDto> {
   // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de
   // cualquiera; SOLICITANTE solo el de sus casos (RN-20).
   async verHistorial(usuario: UsuarioAutenticado, casoId: number): Promise<HistorialDto[]> {
@@ -97,6 +109,79 @@ export class CasosService {
       throw new NotFoundError('El caso no existe');
     }
 
+    if (usuario.rol !== 'AGENTE') {
+      throw new ForbiddenError('ROL_NO_PERMITIDO', 'Solo los agentes pueden reclasificar un caso');
+    }
+
+    // RN-10: cerrada es un estado final.
+    if (caso.estado === 'CERRADA') {
+      throw new ConflictError('CASO_CERRADO', 'El caso está cerrado y no admite cambios');
+    }
+
+    // RN-08: solo se reclasifica mientras el caso está en Pendiente o En análisis.
+    if (!ESTADOS_RECLASIFICABLES.has(caso.estado)) {
+      throw new ConflictError(
+        'ESTADO_NO_PERMITE_OPERACION',
+        'Solo se puede reclasificar un caso en Pendiente o En análisis',
+      );
+    }
+
+    const { categoria: categoriaActual } = caso;
+    if (!categoriaActual?.area) {
+      throw new AppError(500, 'ERROR_INTERNO', 'El caso no tiene su categoría y área completas');
+    }
+
+    const cambios: CambiosClasificacion = {};
+    const descripcion: string[] = [];
+
+    if (input.tipo !== undefined && input.tipo !== caso.tipo) {
+      cambios.tipo = input.tipo;
+      descripcion.push(`tipo: ${caso.tipo} → ${input.tipo}`);
+    }
+
+    if (input.prioridad !== undefined && input.prioridad !== caso.prioridad) {
+      cambios.prioridad = input.prioridad;
+      descripcion.push(`prioridad: ${caso.prioridad} → ${input.prioridad}`);
+    }
+
+    if (input.categoriaId !== undefined && input.areaId !== undefined) {
+      // Enviar la categoría y el área que el caso ya tiene no es un cambio, aunque
+      // la categoría se haya desactivado después: no se valida ni se registra.
+      const mismaCategoria =
+        input.categoriaId === categoriaActual.id && input.areaId === categoriaActual.area.id;
+
+      if (!mismaCategoria) {
+        // RN-03: la nueva categoría debe existir, estar activa y ser del área enviada.
+        const nueva = await this.casos.buscarCategoriaActivaDeArea(input.categoriaId, input.areaId);
+        if (!nueva?.area) {
+          throw new ConflictError(
+            'CATEGORIA_INVALIDA',
+            'La categoría no existe, está inactiva o no pertenece al área indicada',
+          );
+        }
+
+        cambios.categoriaId = nueva.id;
+        descripcion.push(
+          `categoría: ${categoriaActual.nombre} (${categoriaActual.area.nombre}) → ` +
+            `${nueva.nombre} (${nueva.area.nombre})`,
+        );
+      }
+    }
+
+    // Los valores enviados son los actuales: 200 sin evento de historial.
+    if (descripcion.length === 0) {
+      return aCasoDto(caso);
+    }
+
+    await this.casos.reclasificar(casoId, caso.estado, cambios, usuario.id, descripcion.join('; '));
+
+    // La categoría (y con ella el área) puede haber cambiado: se vuelve a leer.
+    const actualizado = await this.casos.buscarPorId(casoId);
+    if (!actualizado) {
+      throw new AppError(500, 'ERROR_INTERNO', 'El caso reclasificado no se pudo leer');
+    }
+
+    return aCasoDto(actualizado);
     // RN-20: el solicitante solo consulta sus propios casos. Se comprueba después
     // del 404 a propósito: al revés, un solicitante usaría el 403 para saber qué
     // ids existen.
@@ -111,3 +196,6 @@ export class CasosService {
     return eventos.map(aHistorialDto);
   }
 }
+
+// RN-08: estados en los que el agente puede corregir la clasificación.
+const ESTADOS_RECLASIFICABLES: ReadonlySet<EstadoCaso> = new Set(['PENDIENTE', 'EN_ANALISIS']);

@@ -57,6 +57,50 @@ export const cambiarEstadoSchema = z.object({
   estado: estadoCasoSchema,
 });
 
+// Body de PATCH /casos/:id/clasificacion (HU-05, RN-08). Cualquier combinación de
+// tipo, prioridad y categoría; areaId y categoriaId van juntos para poder
+// comprobar que la categoría pertenece al área (RN-03).
+export const reclasificarCasoSchema = z
+  .object({
+    tipo: tipoCasoSchema.optional(),
+    prioridad: prioridadSchema.optional(),
+    areaId: idReferencia('areaId').optional(),
+    categoriaId: idReferencia('categoriaId').optional(),
+  })
+  .superRefine((body, ctx) => {
+    const { tipo, prioridad, areaId, categoriaId } = body;
+
+    if (
+      tipo === undefined &&
+      prioridad === undefined &&
+      areaId === undefined &&
+      categoriaId === undefined
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Envía al menos uno de: tipo, prioridad o areaId + categoriaId',
+      });
+    }
+
+    if (categoriaId !== undefined && areaId === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['areaId'],
+        message: "El campo 'areaId' es obligatorio cuando se envía 'categoriaId'",
+      });
+    }
+
+    if (areaId !== undefined && categoriaId === undefined) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['categoriaId'],
+        message: "El campo 'categoriaId' es obligatorio cuando se envía 'areaId'",
+      });
+    }
+  });
+
+export type ReclasificarCasoInput = z.infer<typeof reclasificarCasoSchema>;
+
 // Ordenamiento de casos: fecha_desc por defecto o por prioridad (HU-03).
 export const ordenCasosSchema = z.enum(['fecha_desc', 'prioridad'], {
   error: "El parámetro 'orden' solo admite fecha_desc o prioridad",
