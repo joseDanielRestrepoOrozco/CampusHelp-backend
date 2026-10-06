@@ -2,10 +2,9 @@ import { z } from 'zod';
 import { AppError } from '../errors/app-error.js';
 import type { CasoConRelaciones } from '../repositories/casos.repository.js';
 import { estadoCasoSchema, prioridadSchema, tipoCasoSchema } from '../schemas/caso.schema.js';
+import { aFechaIso } from './fecha.js';
 
-// El contrato (docs/03-api.md) exige fechas en ISO 8601 UTC. Postgres devuelve
-// el timestamptz como texto ("2026-10-01 23:51:28.277293+00"), que no es ISO y
-// no todos los navegadores lo interpretan igual.
+// El contrato (docs/03-api.md) exige fechas en ISO 8601 UTC.
 const fechaIso = z.iso.datetime();
 
 export const casoDtoSchema = z.object({
@@ -25,14 +24,6 @@ export const casoDtoSchema = z.object({
 });
 
 export type CasoDto = z.infer<typeof casoDtoSchema>;
-
-// Postgres entrega el timestamptz como texto; se convierte a ISO 8601 UTC, que es
-// lo que define el contrato. Los null se respetan tal cual.
-function aFechaIso(fecha: string): string;
-function aFechaIso(fecha: string | null): string | null;
-function aFechaIso(fecha: string | null): string | null {
-  return fecha === null ? null : new Date(fecha).toISOString();
-}
 
 export function aCasoDto(caso: CasoConRelaciones): CasoDto {
   const { solicitante, agente, categoria } = caso;

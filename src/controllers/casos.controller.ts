@@ -47,4 +47,14 @@ export class CasosController {
 
     response.json(caso);
   };
+
+  // GET /api/casos/:id/historial (HU-08)
+  historial = async (request: Request, response: Response): Promise<void> => {
+    const usuario = request.usuario!;
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const eventos = await this.casos.verHistorial(usuario, id);
+
+    response.json(eventos);
+  };
 }
