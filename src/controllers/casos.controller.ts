@@ -61,6 +61,8 @@ export class CasosController {
     const caso = await this.casos.reclasificarCaso(request.usuario, id, input);
 
     response.json(caso);
+  };
+
   // GET /api/casos/:id/historial (HU-08)
   historial = async (request: Request, response: Response): Promise<void> => {
     const usuario = request.usuario!;

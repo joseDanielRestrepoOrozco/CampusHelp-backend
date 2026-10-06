@@ -8,7 +8,6 @@ import type {
 } from '../schemas/caso.schema.js';
 import type { CambiosClasificacion, CasosRepository } from '../repositories/casos.repository.js';
 import { aHistorialDto, type HistorialDto } from '../dto/historial.dto.js';
-import type { CasosRepository } from '../repositories/casos.repository.js';
 import type { HistorialRepository } from '../repositories/historial.repository.js';
 import type { UsuarioAutenticado } from '../repositories/usuarios.repository.js';
 
@@ -101,9 +100,6 @@ export class CasosService {
     casoId: number,
     input: ReclasificarCasoInput,
   ): Promise<CasoDto> {
-  // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de
-  // cualquiera; SOLICITANTE solo el de sus casos (RN-20).
-  async verHistorial(usuario: UsuarioAutenticado, casoId: number): Promise<HistorialDto[]> {
     const caso = await this.casos.buscarPorId(casoId);
     if (!caso) {
       throw new NotFoundError('El caso no existe');
@@ -182,6 +178,16 @@ export class CasosService {
     }
 
     return aCasoDto(actualizado);
+  }
+
+  // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de
+  // cualquiera; SOLICITANTE solo el de sus casos (RN-20).
+  async verHistorial(usuario: UsuarioAutenticado, casoId: number): Promise<HistorialDto[]> {
+    const caso = await this.casos.buscarPorId(casoId);
+    if (!caso) {
+      throw new NotFoundError('El caso no existe');
+    }
+
     // RN-20: el solicitante solo consulta sus propios casos. Se comprueba después
     // del 404 a propósito: al revés, un solicitante usaría el 403 para saber qué
     // ids existen.
