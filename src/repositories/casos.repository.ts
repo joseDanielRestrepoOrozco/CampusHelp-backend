@@ -19,6 +19,22 @@ export type CasoConRelaciones = ResultType<ReturnType<typeof consultaCasoConRela
 // El caso guarda la categoría pero no el área: el área sale de la categoría (RN-03).
 export type DatosCaso = Omit<CreateCasoInput, 'areaId'>;
 
+const consultaCategoriaActivaDeArea = (categoriaId: number, areaId: number) =>
+  db.orm.public.Categoria.where({ id: categoriaId, activa: true, areaId }).include(
+    'area',
+    area => area,
+  );
+
+export type CategoriaConArea = ResultType<ReturnType<typeof consultaCategoriaActivaDeArea>>;
+
+// Campos que puede cambiar la reclasificación (RN-08). El área no se guarda en
+// el caso: sale de la categoría (RN-03).
+export interface CambiosClasificacion {
+  tipo?: CasoConRelaciones['tipo'];
+  prioridad?: CasoConRelaciones['prioridad'];
+  categoriaId?: number;
+}
+
 // Filtros de GET /api/casos (HU-02 y HU-03).
 export interface FiltrosCaso {
   solicitanteId?: number;
@@ -131,14 +147,46 @@ export class CasosRepository {
 
   // RN-03: la categoría debe existir, estar activa y pertenecer al área enviada.
   // Devuelve null para que la regla (y el 409) los aplique la capa de servicio.
+  // Trae el área para que la reclasificación pueda describir el cambio.
   async buscarCategoriaActivaDeArea(
     categoriaId: number,
     areaId: number,
-  ): Promise<{ id: number } | null> {
-    return db.orm.public.Categoria.where({
-      id: categoriaId,
-      activa: true,
-      areaId,
-    }).first();
+  ): Promise<CategoriaConArea | null> {
+    return consultaCategoriaActivaDeArea(categoriaId, areaId).first();
+  }
+
+  // RN-08 y RN-17: los nuevos valores y el evento RECLASIFICACION se escriben en
+  // la misma transacción. El `where` exige que el caso siga en `estadoActual`:
+  // si otra petición lo movió a un estado que ya no admite reclasificar, no se
+  // cambia nada y se responde 409.
+  async reclasificar(
+    casoId: number,
+    estadoActual: EstadoCaso,
+    cambios: CambiosClasificacion,
+    usuarioId: number,
+    comentario: string,
+  ): Promise<void> {
+    await db.transaction(async tx => {
+      const actualizado = await tx.orm.public.Caso.where({
+        id: casoId,
+        estado: estadoActual,
+      }).update(cambios);
+
+      if (!actualizado) {
+        throw new ConflictError(
+          'ESTADO_NO_PERMITE_OPERACION',
+          'El caso cambió de estado mientras se procesaba la petición; inténtalo de nuevo',
+        );
+      }
+
+      await this.historial.registrarEvento(tx, {
+        casoId,
+        evento: 'RECLASIFICACION',
+        estadoAnterior: estadoActual,
+        estadoNuevo: estadoActual,
+        usuarioId,
+        comentario,
+      });
+    });
   }
 }

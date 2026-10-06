@@ -6,6 +6,7 @@ import {
   casoIdParamsSchema,
   cambiarEstadoSchema,
   listarCasosQuerySchema,
+  reclasificarCasoSchema,
 } from '../schemas/caso.schema.js';
 import type { CasosService } from '../services/casos.service.js';
 
@@ -44,6 +45,20 @@ export class CasosController {
     const { estado } = parseWithSchema(cambiarEstadoSchema, request.body, 'body');
 
     const caso = await this.casos.cambiarEstado(usuario, id, estado);
+
+    response.json(caso);
+  };
+
+  // PATCH /api/casos/:id/clasificacion (HU-05)
+  reclasificar = async (request: Request, response: Response): Promise<void> => {
+    if (!request.usuario) {
+      throw new UnauthorizedError();
+    }
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const input = parseWithSchema(reclasificarCasoSchema, request.body, 'body');
+
+    const caso = await this.casos.reclasificarCaso(request.usuario, id, input);
 
     response.json(caso);
   };
