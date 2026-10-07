@@ -35,14 +35,12 @@ export interface CambiosClasificacion {
   categoriaId?: number;
 }
 
-// Filtros de GET /api/casos (HU-02 y HU-03).
-export interface FiltrosCaso {
-  solicitanteId?: number;
-  agenteId?: number;
-  abiertos?: boolean;
-  sinAgente?: boolean;
-  orden: ListarCasosQuery['orden'];
-}
+// Filtros de GET /api/casos (HU-02, HU-03 y HU-09): los mismos query params ya
+// validados, con `solicitanteId` ya decidido por el servicio (RN-20).
+export type FiltrosCaso = ListarCasosQuery;
+
+// `q` se busca literal: `%`, `_` y `\` del texto no actúan como comodines de LIKE.
+const patronContiene = (texto: string) => `%${texto.replace(/[\\%_]/g, '\\$&')}%`;
 
 // Solo acceso a datos. Las reglas de negocio (rol, categoría) viven en
 // CasosService; aquí solo se persiste y se consulta.
@@ -128,6 +126,34 @@ export class CasosRepository {
 
     if (filtros.abiertos) {
       query = query.where(caso => caso.estado.neq('CERRADA'));
+    }
+
+    const { estado, tipo, prioridad, areaId, categoriaId, q } = filtros;
+
+    if (estado) {
+      query = query.where(caso => caso.estado.in(estado));
+    }
+
+    if (tipo) {
+      query = query.where(caso => caso.tipo.in(tipo));
+    }
+
+    if (prioridad) {
+      query = query.where(caso => caso.prioridad.in(prioridad));
+    }
+
+    // El caso no guarda el área: se filtra por el área de su categoría (RN-03).
+    // Si no coincide con `categoriaId`, simplemente no hay resultados.
+    if (areaId !== undefined) {
+      query = query.where(caso => caso.categoria.some(categoria => categoria.areaId.eq(areaId)));
+    }
+
+    if (categoriaId !== undefined) {
+      query = query.where({ categoriaId });
+    }
+
+    if (q !== undefined) {
+      query = query.where(caso => caso.titulo.ilike(patronContiene(q)));
     }
 
     if (filtros.orden === 'prioridad') {

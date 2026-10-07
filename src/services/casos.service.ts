@@ -52,19 +52,14 @@ export class CasosService {
     return aCasoDto(caso);
   }
 
-  // HU-02 / HU-03: consultar casos y bandeja de trabajo.
+  // HU-02 / HU-03 / HU-09: consultar, filtrar y bandeja de trabajo.
   async listarCasos(usuario: UsuarioAutenticado, query: ListarCasosQuery): Promise<CasoDto[]> {
     // RN-20: un solicitante solo ve sus propios casos, aunque pida los de otro.
-    // Los demás roles ven todos y pueden filtrar por solicitante.
+    // Los demás roles ven todos y pueden filtrar por solicitante. El resto de
+    // filtros (HU-09) se aplica encima, así que el solicitante filtra sus casos.
     const solicitanteId = usuario.rol === 'SOLICITANTE' ? usuario.id : query.solicitanteId;
 
-    const casos = await this.casos.listar({
-      solicitanteId,
-      agenteId: query.agenteId,
-      abiertos: query.abiertos,
-      sinAgente: query.sinAgente,
-      orden: query.orden,
-    });
+    const casos = await this.casos.listar({ ...query, solicitanteId });
     return casos.map(aCasoDto);
   }
 
