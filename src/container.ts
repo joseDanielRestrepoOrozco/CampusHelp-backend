@@ -15,7 +15,7 @@ const areasRepository = new AreasRepository();
 const categoriasRepository = new CategoriasRepository();
 const historialRepository = new HistorialRepository();
 const casosRepository = new CasosRepository(historialRepository);
-const casosService = new CasosService(casosRepository, historialRepository);
+const casosService = new CasosService(casosRepository, historialRepository, usuariosRepository);
 
 export const container = {
   // El middleware usuarioActual lo necesita para resolver X-Usuario-Id.

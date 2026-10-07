@@ -9,7 +9,10 @@ import type {
 import type { CambiosClasificacion, CasosRepository } from '../repositories/casos.repository.js';
 import { aHistorialDto, type HistorialDto } from '../dto/historial.dto.js';
 import type { HistorialRepository } from '../repositories/historial.repository.js';
-import type { UsuarioAutenticado } from '../repositories/usuarios.repository.js';
+import type {
+  UsuarioAutenticado,
+  UsuariosRepository,
+} from '../repositories/usuarios.repository.js';
 
 // Capa de servicio: aquí viven las reglas de negocio del registro de casos,
 // no en el controlador ni en el repositorio.
@@ -17,6 +20,7 @@ export class CasosService {
   constructor(
     private readonly casos: CasosRepository,
     private readonly historial: HistorialRepository,
+    private readonly usuarios: UsuariosRepository,
   ) {}
 
   // HU-01: registrar incidente o solicitud.
@@ -180,6 +184,61 @@ export class CasosService {
     return aCasoDto(actualizado);
   }
 
+  // HU-04: asignar o reasignar el agente responsable. Un agente puede asignarse
+  // a sí mismo o asignar a otro agente. Orden de errores del contrato: 404 → 403 → 409.
+  async asignarCaso(
+    usuario: UsuarioAutenticado,
+    casoId: number,
+    agenteId: number,
+  ): Promise<CasoDto> {
+    const caso = await this.casos.buscarPorId(casoId);
+    if (!caso) {
+      throw new NotFoundError('El caso no existe');
+    }
+
+    if (usuario.rol !== 'AGENTE') {
+      throw new ForbiddenError('ROL_NO_PERMITIDO', 'Solo los agentes pueden asignar un caso');
+    }
+
+    // RN-10: cerrada es un estado final.
+    if (caso.estado === 'CERRADA') {
+      throw new ConflictError('CASO_CERRADO', 'El caso está cerrado y no admite cambios');
+    }
+
+    // RN-19: solo se asigna o reasigna en Pendiente o En análisis.
+    if (!ESTADOS_ASIGNABLES.has(caso.estado)) {
+      throw new ConflictError(
+        'ESTADO_NO_PERMITE_OPERACION',
+        'Solo se puede asignar un caso en Pendiente o En análisis',
+      );
+    }
+
+    // RN-18: solo usuarios con rol Agente y activos. Un id inexistente cae aquí.
+    const agente = await this.usuarios.buscarActivoPorId(agenteId);
+    if (!agente || agente.rol !== 'AGENTE') {
+      throw new ConflictError('AGENTE_INVALIDO', 'El agente indicado no es un agente activo');
+    }
+
+    // Ya está asignado a ese agente: 200 sin evento y sin cambiar la fecha.
+    if (caso.agenteId === agente.id) {
+      return aCasoDto(caso);
+    }
+
+    const comentario = caso.agente
+      ? `Reasignado de ${caso.agente.nombre} a ${agente.nombre}`
+      : `Asignado a ${agente.nombre}`;
+
+    await this.casos.asignar(casoId, caso.estado, agente.id, usuario.id, comentario);
+
+    // El agente y la fecha de asignación cambiaron: se vuelve a leer el caso.
+    const actualizado = await this.casos.buscarPorId(casoId);
+    if (!actualizado) {
+      throw new AppError(500, 'ERROR_INTERNO', 'El caso asignado no se pudo leer');
+    }
+
+    return aCasoDto(actualizado);
+  }
+
   // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de
   // cualquiera; SOLICITANTE solo el de sus casos (RN-20).
   async verHistorial(usuario: UsuarioAutenticado, casoId: number): Promise<HistorialDto[]> {
@@ -205,3 +264,6 @@ export class CasosService {
 
 // RN-08: estados en los que el agente puede corregir la clasificación.
 const ESTADOS_RECLASIFICABLES: ReadonlySet<EstadoCaso> = new Set(['PENDIENTE', 'EN_ANALISIS']);
+
+// RN-19: estados en los que se puede asignar o reasignar el caso.
+const ESTADOS_ASIGNABLES: ReadonlySet<EstadoCaso> = new Set(['PENDIENTE', 'EN_ANALISIS']);

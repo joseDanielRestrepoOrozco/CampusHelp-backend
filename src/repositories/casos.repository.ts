@@ -155,6 +155,41 @@ export class CasosRepository {
     return consultaCategoriaActivaDeArea(categoriaId, areaId).first();
   }
 
+  // RN-18 y RN-17: el agente, la fecha de asignación y el evento ASIGNACION se
+  // escriben en la misma transacción. El `where` exige que el caso siga en
+  // `estadoActual`: si otra petición lo movió a un estado que ya no admite
+  // asignar (RN-19), no se cambia nada y se responde 409.
+  async asignar(
+    casoId: number,
+    estadoActual: EstadoCaso,
+    agenteId: number,
+    usuarioId: number,
+    comentario: string,
+  ): Promise<void> {
+    await db.transaction(async tx => {
+      const actualizado = await tx.orm.public.Caso.where({
+        id: casoId,
+        estado: estadoActual,
+      }).update({ agenteId, fechaAsignacion: new Date().toISOString() });
+
+      if (!actualizado) {
+        throw new ConflictError(
+          'ESTADO_NO_PERMITE_OPERACION',
+          'El caso cambió de estado mientras se procesaba la petición; inténtalo de nuevo',
+        );
+      }
+
+      await this.historial.registrarEvento(tx, {
+        casoId,
+        evento: 'ASIGNACION',
+        estadoAnterior: estadoActual,
+        estadoNuevo: estadoActual,
+        usuarioId,
+        comentario,
+      });
+    });
+  }
+
   // RN-08 y RN-17: los nuevos valores y el evento RECLASIFICACION se escriben en
   // la misma transacción. El `where` exige que el caso siga en `estadoActual`:
   // si otra petición lo movió a un estado que ya no admite reclasificar, no se

@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { UnauthorizedError } from '../errors/app-error.js';
 import { parseWithSchema } from '../schemas/parse.js';
 import {
+  asignarCasoSchema,
   createCasoSchema,
   casoIdParamsSchema,
   cambiarEstadoSchema,
@@ -59,6 +60,20 @@ export class CasosController {
     const input = parseWithSchema(reclasificarCasoSchema, request.body, 'body');
 
     const caso = await this.casos.reclasificarCaso(request.usuario, id, input);
+
+    response.json(caso);
+  };
+
+  // PATCH /api/casos/:id/asignar (HU-04)
+  asignar = async (request: Request, response: Response): Promise<void> => {
+    if (!request.usuario) {
+      throw new UnauthorizedError();
+    }
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const { agenteId } = parseWithSchema(asignarCasoSchema, request.body, 'body');
+
+    const caso = await this.casos.asignarCaso(request.usuario, id, agenteId);
 
     response.json(caso);
   };

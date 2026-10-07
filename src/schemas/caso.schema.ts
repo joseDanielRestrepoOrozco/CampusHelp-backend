@@ -101,6 +101,14 @@ export const reclasificarCasoSchema = z
 
 export type ReclasificarCasoInput = z.infer<typeof reclasificarCasoSchema>;
 
+// Body de PATCH /casos/:id/asignar (HU-04). Si el agente se asigna a sí mismo,
+// manda su propio id (docs/03-api.md).
+export const asignarCasoSchema = z.object({
+  agenteId: idReferencia('agenteId'),
+});
+
+export type AsignarCasoInput = z.infer<typeof asignarCasoSchema>;
+
 // Ordenamiento de casos: fecha_desc por defecto o por prioridad (HU-03).
 export const ordenCasosSchema = z.enum(['fecha_desc', 'prioridad'], {
   error: "El parámetro 'orden' solo admite fecha_desc o prioridad",
