@@ -37,13 +37,17 @@ const TRANSICIONES_PERMITIDAS = new Set(
 // esta forma, así que los endpoints pueden pasar el que ya leyeron.
 export interface CasoParaTransicionar {
   estado: EstadoCaso;
+  agenteId: number | null;
 }
 
-// TODO(#25): exigir que el caso tenga agente asignado antes de entrar a
-// EN_ATENCION. Cuando se implemente, este tipo llevará también el agente:
-// `if (!caso.agenteId) throw new ConflictError('SIN_AGENTE_ASIGNADO', '...')`.
-export function verificarAgenteAsignado(_caso: CasoParaTransicionar): void {
-  // Sin regla todavía: la transición pasa si está en la tabla (fuera de alcance).
+// RN-11: para entrar a EN_ATENCION el caso debe tener agente asignado (#25).
+export function verificarAgenteAsignado(caso: CasoParaTransicionar): void {
+  if (caso.agenteId === null) {
+    throw new ConflictError(
+      'SIN_AGENTE_ASIGNADO',
+      'El caso no tiene agente asignado y no puede pasar a En atención',
+    );
+  }
 }
 
 // TODO(#29): exigir solución registrada antes de entrar a EN_VALIDACION. Esta
