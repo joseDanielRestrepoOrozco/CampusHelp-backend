@@ -109,6 +109,21 @@ export const asignarCasoSchema = z.object({
 
 export type AsignarCasoInput = z.infer<typeof asignarCasoSchema>;
 
+// Body de POST /casos/:id/atencion (HU-06, RN-12). El `.trim()` va antes del
+// `.min()`: se valida y se guarda el texto ya recortado, con mínimo 10 caracteres.
+export const registrarAtencionSchema = z.object({
+  diagnostico: z
+    .string({ error: "El campo 'diagnostico' es obligatorio" })
+    .trim()
+    .min(10, 'El diagnóstico debe tener al menos 10 caracteres'),
+  solucion: z
+    .string({ error: "El campo 'solucion' es obligatorio" })
+    .trim()
+    .min(10, 'La solución debe tener al menos 10 caracteres'),
+});
+
+export type RegistrarAtencionInput = z.infer<typeof registrarAtencionSchema>;
+
 // Ordenamiento de casos: fecha_desc por defecto o por prioridad (HU-03).
 export const ordenCasosSchema = z.enum(['fecha_desc', 'prioridad'], {
   error: "El parámetro 'orden' solo admite fecha_desc o prioridad",

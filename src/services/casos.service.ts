@@ -1,12 +1,15 @@
 import { AppError, ConflictError, ForbiddenError, NotFoundError } from '../errors/app-error.js';
 import { validarTransicion, type EstadoCaso } from '../domain/estados.js';
 import { aCasoDto, type CasoDto } from '../dto/caso.dto.js';
+import { aAtencionDto, type AtencionDto } from '../dto/atencion.dto.js';
 import type {
   CreateCasoInput,
   ListarCasosQuery,
   ReclasificarCasoInput,
+  RegistrarAtencionInput,
 } from '../schemas/caso.schema.js';
 import type { CambiosClasificacion, CasosRepository } from '../repositories/casos.repository.js';
+import type { AtencionesRepository } from '../repositories/atenciones.repository.js';
 import { aHistorialDto, type HistorialDto } from '../dto/historial.dto.js';
 import type { HistorialRepository } from '../repositories/historial.repository.js';
 import type {
@@ -21,6 +24,7 @@ export class CasosService {
     private readonly casos: CasosRepository,
     private readonly historial: HistorialRepository,
     private readonly usuarios: UsuariosRepository,
+    private readonly atenciones: AtencionesRepository,
   ) {}
 
   // HU-01: registrar incidente o solicitud.
@@ -83,7 +87,18 @@ export class CasosService {
     }
 
     // RN-09, RN-10 y RN-14: la tabla de transiciones vive en src/domain/estados.ts.
-    validarTransicion(caso, estadoNuevo, 'manual');
+    // RN-13: si el caso va de En atención a En validación, se comprueba antes que
+    // exista una solución vigente (atención posterior a la última devolución).
+    let tieneAtencionVigente: boolean | undefined;
+    if (caso.estado === 'EN_ATENCION' && estadoNuevo === 'EN_VALIDACION') {
+      const atencion = await this.atenciones.atencionVigente(casoId);
+      const devolucion = await this.historial.ultimaDevolucion(casoId);
+      tieneAtencionVigente =
+        atencion !== null &&
+        (devolucion === null || new Date(atencion.fecha) > new Date(devolucion.fecha));
+    }
+
+    validarTransicion(caso, estadoNuevo, 'manual', { tieneAtencionVigente });
 
     await this.casos.cambiarEstado(casoId, caso.estado, estadoNuevo, usuario.id);
 
@@ -232,6 +247,62 @@ export class CasosService {
     }
 
     return aCasoDto(actualizado);
+  }
+
+  // HU-06: el agente asignado documenta el diagnóstico y la solución. Orden de
+  // errores del contrato: 400 (esquema) → 404 → 403 → 409.
+  async registrarAtencion(
+    usuario: UsuarioAutenticado,
+    casoId: number,
+    input: RegistrarAtencionInput,
+  ): Promise<AtencionDto> {
+    const caso = await this.casos.buscarPorId(casoId);
+    if (!caso) {
+      throw new NotFoundError('El caso no existe');
+    }
+
+    if (usuario.rol !== 'AGENTE') {
+      throw new ForbiddenError(
+        'ROL_NO_PERMITIDO',
+        'Solo los agentes pueden registrar la atención de un caso',
+      );
+    }
+
+    // RN-12: solo el agente asignado documenta la atención.
+    if (caso.agenteId !== usuario.id) {
+      throw new ForbiddenError(
+        'NO_ES_AGENTE_ASIGNADO',
+        'Solo el agente asignado al caso puede registrar la atención',
+      );
+    }
+
+    // RN-10: cerrada es un estado final.
+    if (caso.estado === 'CERRADA') {
+      throw new ConflictError('CASO_CERRADO', 'El caso está cerrado y no admite cambios');
+    }
+
+    // RN-12: la atención solo se registra cuando el caso está En atención.
+    if (caso.estado !== 'EN_ATENCION') {
+      throw new ConflictError(
+        'ESTADO_NO_PERMITE_OPERACION',
+        'Solo se puede registrar una atención en un caso En atención',
+      );
+    }
+
+    const atencionId = await this.atenciones.registrarAtencion(
+      casoId,
+      usuario.id,
+      input.diagnostico,
+      input.solucion,
+      caso.estado,
+    );
+
+    const atencion = await this.atenciones.buscarPorId(atencionId);
+    if (!atencion) {
+      throw new AppError(500, 'ERROR_INTERNO', 'La atención recién creada no se pudo leer');
+    }
+
+    return aAtencionDto(atencion);
   }
 
   // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de

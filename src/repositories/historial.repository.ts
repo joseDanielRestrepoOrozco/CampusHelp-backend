@@ -42,4 +42,13 @@ export class HistorialRepository {
       .orderBy([evento => evento.fecha.asc(), evento => evento.id.asc()])
       .all();
   }
+
+  // RN-13: la última devolución del caso, si la hay. La atención vigente debe ser
+  // posterior a ella para que el caso pueda volver a validación (HU-06/HU-07).
+  async ultimaDevolucion(casoId: number): Promise<HistorialConUsuario | null> {
+    return consultaHistorialDeCaso(casoId)
+      .where({ evento: 'DEVOLUCION' })
+      .orderBy([evento => evento.fecha.desc(), evento => evento.id.desc()])
+      .first();
+  }
 }
