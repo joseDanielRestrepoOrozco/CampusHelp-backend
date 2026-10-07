@@ -99,6 +99,10 @@ model Caso {
   @@index([estado])
   @@index([solicitanteId])
   @@index([agenteId])
+  // Filtros de GET /casos (HU-09).
+  @@index([categoriaId])
+  @@index([prioridad])
+  @@index([tipo])
   @@map("caso")
 }
 

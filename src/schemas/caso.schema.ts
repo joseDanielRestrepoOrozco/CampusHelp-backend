@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { MAX_ID_INT32 } from '../constants.js';
 import { idPathParam } from './param.schema.js';
-import { booleanoQuery, idQuery } from './query.schema.js';
+import { booleanoQuery, idQuery, listaEnumQuery } from './query.schema.js';
 
 export const tipoCasoSchema = z.enum(['INCIDENTE', 'SOLICITUD'], {
   error: "El campo 'tipo' debe ser INCIDENTE o SOLICITUD",
@@ -114,12 +114,34 @@ export const ordenCasosSchema = z.enum(['fecha_desc', 'prioridad'], {
   error: "El parámetro 'orden' solo admite fecha_desc o prioridad",
 });
 
-// Query params de GET /api/casos (HU-02 y HU-03).
+// Texto que se busca en el título (HU-09). Vacío u omitido queda como undefined
+// (sin filtro); el tope es el mismo largo máximo del título (RN-04).
+const busquedaQuery = z
+  .preprocess(
+    valor => {
+      if (typeof valor !== 'string') return valor;
+      const texto = valor.trim();
+      return texto === '' ? undefined : texto;
+    },
+    z
+      .string({ error: "El parámetro 'q' debe ser un texto" })
+      .max(180, "El parámetro 'q' admite como máximo 180 caracteres")
+      .optional(),
+  )
+  .optional();
+
+// Query params de GET /api/casos (HU-02, HU-03 y HU-09). Todos se combinan con Y lógico.
 export const listarCasosQuerySchema = z.object({
   solicitanteId: idQuery('solicitanteId'),
   agenteId: idQuery('agenteId'),
   abiertos: booleanoQuery('abiertos'),
   sinAgente: booleanoQuery('sinAgente'),
+  estado: listaEnumQuery('estado', estadoCasoSchema.options),
+  tipo: listaEnumQuery('tipo', tipoCasoSchema.options),
+  prioridad: listaEnumQuery('prioridad', prioridadSchema.options),
+  areaId: idQuery('areaId'),
+  categoriaId: idQuery('categoriaId'),
+  q: busquedaQuery,
   orden: ordenCasosSchema.default('fecha_desc'),
 });
 

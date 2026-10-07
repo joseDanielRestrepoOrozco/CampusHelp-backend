@@ -1126,6 +1126,22 @@
                 },
                 {
                   "columns": [
+                    "prioridad"
+                  ],
+                  "name": "caso_prioridad_idx_86f496ef",
+                  "prefix": "caso_prioridad_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tipo"
+                  ],
+                  "name": "caso_tipo_idx_2cc2d1f4",
+                  "prefix": "caso_tipo_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
                     "usuario_id"
                   ],
                   "name": "caso_usuario_id_idx_65b6616a",
@@ -1481,7 +1497,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "eccce1460cf7d1e3e787d2544c944935a0a135acf8aecc6f758b57017cccdc78"
+    "storageHash": "96aef95eb591dc199cc499a8534d51969988869beee6412c008d56672d4373ff"
   },
   "capabilities": {
     "postgres": {
