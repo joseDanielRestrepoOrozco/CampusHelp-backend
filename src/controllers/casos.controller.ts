@@ -9,6 +9,7 @@ import {
   listarCasosQuerySchema,
   reclasificarCasoSchema,
   registrarAtencionSchema,
+  validarCasoSchema,
 } from '../schemas/caso.schema.js';
 import type { CasosService } from '../services/casos.service.js';
 
@@ -81,12 +82,24 @@ export class CasosController {
 
   // POST /api/casos/:id/atencion (HU-06)
   atender = async (request: Request, response: Response): Promise<void> => {
+    const usuario = request.usuario!;
+
     const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
     const input = parseWithSchema(registrarAtencionSchema, request.body, 'body');
 
-    const atencion = await this.casos.registrarAtencion(request.usuario, id, input);
+    const atencion = await this.casos.registrarAtencion(usuario, id, input);
 
     response.status(201).json(atencion);
+  };
+
+  // POST /api/casos/:id/validacion (HU-07)
+  validar = async (request: Request, response: Response): Promise<void> => {
+    const usuario = request.usuario!;
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const input = parseWithSchema(validarCasoSchema, request.body, 'body');
+
+    response.json(await this.casos.validarCaso(usuario, id, input));
   };
 
   // GET /api/casos/:id/historial (HU-08)

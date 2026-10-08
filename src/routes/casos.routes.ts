@@ -12,4 +12,5 @@ casosRouter.patch('/casos/:id/estado', autenticar, container.casosController.cam
 casosRouter.patch('/casos/:id/clasificacion', autenticar, container.casosController.reclasificar);
 casosRouter.patch('/casos/:id/asignar', autenticar, container.casosController.asignar);
 casosRouter.post('/casos/:id/atencion', autenticar, container.casosController.atender);
+casosRouter.post('/casos/:id/validacion', autenticar, container.casosController.validar);
 casosRouter.get('/casos/:id/historial', autenticar, container.casosController.historial);
