@@ -3,6 +3,7 @@ import { AreasRepository } from './repositories/areas.repository.js';
 import { CategoriasRepository } from './repositories/categorias.repository.js';
 import { HistorialRepository } from './repositories/historial.repository.js';
 import { CasosRepository } from './repositories/casos.repository.js';
+import { CategoriasService } from './services/categorias.service.js';
 import { CasosService } from './services/casos.service.js';
 import { CasosController } from './controllers/casos.controller.js';
 import { UsuariosController } from './controllers/usuarios.controller.js';
@@ -14,6 +15,7 @@ const usuariosRepository = new UsuariosRepository();
 const areasRepository = new AreasRepository();
 const categoriasRepository = new CategoriasRepository();
 const historialRepository = new HistorialRepository();
+const categoriasService = new CategoriasService(categoriasRepository, areasRepository);
 const casosRepository = new CasosRepository(historialRepository);
 const casosService = new CasosService(casosRepository, historialRepository, usuariosRepository);
 
@@ -22,6 +24,6 @@ export const container = {
   usuariosRepository,
   usuariosController: new UsuariosController(usuariosRepository),
   areasController: new AreasController(areasRepository),
-  categoriasController: new CategoriasController(categoriasRepository),
+  categoriasController: new CategoriasController(categoriasService),
   casosController: new CasosController(casosService),
 };
