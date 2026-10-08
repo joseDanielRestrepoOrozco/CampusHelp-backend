@@ -81,6 +81,10 @@ export class CasosController {
 
   // POST /api/casos/:id/atencion (HU-06)
   atender = async (request: Request, response: Response): Promise<void> => {
+    if (!request.usuario) {
+      throw new UnauthorizedError();
+    }
+
     const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
     const input = parseWithSchema(registrarAtencionSchema, request.body, 'body');
 
