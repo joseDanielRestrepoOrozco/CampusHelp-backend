@@ -124,6 +124,29 @@ export const registrarAtencionSchema = z.object({
 
 export type RegistrarAtencionInput = z.infer<typeof registrarAtencionSchema>;
 
+// Body de POST /casos/:id/validacion (HU-07, RN-14 a RN-16). Aprobar no exige
+// comentario; devolver sí, de mínimo 10 caracteres ya recortados (RN-15).
+export const validarCasoSchema = z
+  .object({
+    aprobado: z.boolean({ error: "El campo 'aprobado' es obligatorio y debe ser true o false" }),
+    comentario: z
+      .string({ error: "El campo 'comentario' debe ser un texto" })
+      .trim()
+      .nullish()
+      .transform(valor => (valor ? valor : null)),
+  })
+  .superRefine((body, ctx) => {
+    if (!body.aprobado && (body.comentario === null || body.comentario.length < 10)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['comentario'],
+        message: 'Para devolver el caso el comentario debe tener al menos 10 caracteres',
+      });
+    }
+  });
+
+export type ValidarCasoInput = z.infer<typeof validarCasoSchema>;
+
 // Ordenamiento de casos: fecha_desc por defecto o por prioridad (HU-03).
 export const ordenCasosSchema = z.enum(['fecha_desc', 'prioridad'], {
   error: "El parámetro 'orden' solo admite fecha_desc o prioridad",

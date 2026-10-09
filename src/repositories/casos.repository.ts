@@ -81,7 +81,7 @@ export class CasosRepository {
   // simultáneas sobre el mismo caso pasaron la validación con la misma lectura:
   // la segunda no encuentra la fila, no cambia nada y responde 409 en vez de
   // duplicar el evento. `fechaCierre` no se toca: cerrar solo lo hace la
-  // validación (#33).
+  // validación (validar).
   async cambiarEstado(
     casoId: number,
     estadoAnterior: EstadoCaso,
@@ -107,6 +107,44 @@ export class CasosRepository {
         estadoAnterior,
         estadoNuevo,
         usuarioId,
+      });
+    });
+  }
+
+  // RN-14, RN-15 y RN-17: el nuevo estado (con `fechaCierre` al aprobar) y el
+  // evento APROBACION o DEVOLUCION se escriben en la misma transacción. El
+  // `where` exige que el caso siga EN_VALIDACION: si otra petición ya lo
+  // validó, no se cambia nada y se responde 409. Devolver no toca el agente.
+  async validar(
+    casoId: number,
+    aprobado: boolean,
+    comentario: string | null,
+    usuarioId: number,
+  ): Promise<void> {
+    await db.transaction(async tx => {
+      const cambios = aprobado
+        ? { estado: 'CERRADA' as const, fechaCierre: new Date().toISOString() }
+        : { estado: 'EN_ATENCION' as const };
+
+      const actualizado = await tx.orm.public.Caso.where({
+        id: casoId,
+        estado: 'EN_VALIDACION',
+      }).update(cambios);
+
+      if (!actualizado) {
+        throw new ConflictError(
+          'ESTADO_NO_PERMITE_OPERACION',
+          'El caso cambió de estado mientras se procesaba la petición; inténtalo de nuevo',
+        );
+      }
+
+      await this.historial.registrarEvento(tx, {
+        casoId,
+        evento: aprobado ? 'APROBACION' : 'DEVOLUCION',
+        estadoAnterior: 'EN_VALIDACION',
+        estadoNuevo: cambios.estado,
+        usuarioId,
+        comentario,
       });
     });
   }

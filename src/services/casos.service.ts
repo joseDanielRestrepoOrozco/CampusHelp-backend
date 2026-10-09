@@ -7,6 +7,7 @@ import type {
   ListarCasosQuery,
   ReclasificarCasoInput,
   RegistrarAtencionInput,
+  ValidarCasoInput,
 } from '../schemas/caso.schema.js';
 import type { CambiosClasificacion, CasosRepository } from '../repositories/casos.repository.js';
 import type { AtencionesRepository } from '../repositories/atenciones.repository.js';
@@ -303,6 +304,58 @@ export class CasosService {
     }
 
     return aAtencionDto(atencion);
+  }
+
+  // HU-07: el validador aprueba (cierra) o devuelve la solución. Orden de errores
+  // del contrato: 400 (esquema) → 404 → 403 → 409.
+  async validarCaso(
+    usuario: UsuarioAutenticado,
+    casoId: number,
+    input: ValidarCasoInput,
+  ): Promise<CasoDto> {
+    const caso = await this.casos.buscarPorId(casoId);
+    if (!caso) {
+      throw new NotFoundError('El caso no existe');
+    }
+
+    if (usuario.rol !== 'VALIDADOR') {
+      throw new ForbiddenError('ROL_NO_PERMITIDO', 'Solo los validadores pueden validar un caso');
+    }
+
+    // RN-10: cerrada es un estado final.
+    if (caso.estado === 'CERRADA') {
+      throw new ConflictError('CASO_CERRADO', 'El caso está cerrado y no admite cambios');
+    }
+
+    if (caso.estado !== 'EN_VALIDACION') {
+      throw new ConflictError(
+        'ESTADO_NO_PERMITE_OPERACION',
+        'Solo se puede validar un caso En validación',
+      );
+    }
+
+    // RN-16: quien registró la atención vigente no puede validarla.
+    const atencion = await this.atenciones.atencionVigente(casoId);
+    if (atencion && atencion.agenteId === usuario.id) {
+      throw new ConflictError(
+        'VALIDADOR_ES_AGENTE',
+        'El validador no puede ser quien registró la atención del caso',
+      );
+    }
+
+    // RN-14 y RN-15: la tabla de transiciones vive en src/domain/estados.ts.
+    const estadoNuevo: EstadoCaso = input.aprobado ? 'CERRADA' : 'EN_ATENCION';
+    validarTransicion(caso, estadoNuevo, 'validacion');
+
+    await this.casos.validar(casoId, input.aprobado, input.comentario, usuario.id);
+
+    // El estado, la fecha de cierre y el historial cambiaron: se vuelve a leer.
+    const actualizado = await this.casos.buscarPorId(casoId);
+    if (!actualizado) {
+      throw new AppError(500, 'ERROR_INTERNO', 'El caso validado no se pudo leer');
+    }
+
+    return aCasoDto(actualizado);
   }
 
   // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de
