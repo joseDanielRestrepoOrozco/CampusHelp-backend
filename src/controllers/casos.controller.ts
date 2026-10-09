@@ -8,6 +8,7 @@ import {
   cambiarEstadoSchema,
   listarCasosQuerySchema,
   reclasificarCasoSchema,
+  registrarAtencionSchema,
 } from '../schemas/caso.schema.js';
 import type { CasosService } from '../services/casos.service.js';
 
@@ -76,6 +77,20 @@ export class CasosController {
     const caso = await this.casos.asignarCaso(request.usuario, id, agenteId);
 
     response.json(caso);
+  };
+
+  // POST /api/casos/:id/atencion (HU-06)
+  atender = async (request: Request, response: Response): Promise<void> => {
+    if (!request.usuario) {
+      throw new UnauthorizedError();
+    }
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const input = parseWithSchema(registrarAtencionSchema, request.body, 'body');
+
+    const atencion = await this.casos.registrarAtencion(request.usuario, id, input);
+
+    response.status(201).json(atencion);
   };
 
   // GET /api/casos/:id/historial (HU-08)

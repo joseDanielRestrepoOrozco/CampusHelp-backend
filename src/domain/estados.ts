@@ -40,6 +40,14 @@ export interface CasoParaTransicionar {
   agenteId: number | null;
 }
 
+// Información que el servicio ya averiguó y que las reglas necesitan. El dominio
+// se mantiene síncrono y puro: no consulta la base de datos.
+export interface ContextoTransicion {
+  // RN-13: si la transición es a EN_VALIDACION, indica si el caso tiene una
+  // solución vigente (atención registrada después de la última devolución).
+  tieneAtencionVigente?: boolean;
+}
+
 // RN-11: para entrar a EN_ATENCION el caso debe tener agente asignado (#25).
 export function verificarAgenteAsignado(caso: CasoParaTransicionar): void {
   if (caso.agenteId === null) {
@@ -50,11 +58,16 @@ export function verificarAgenteAsignado(caso: CasoParaTransicionar): void {
   }
 }
 
-// TODO(#29): exigir solución registrada antes de entrar a EN_VALIDACION. Esta
-// regla necesita consultar la atención vigente del caso:
-// `if (!atencion) throw new ConflictError('SIN_SOLUCION', '...')`.
-export function verificarSolucionRegistrada(_caso: CasoParaTransicionar): void {
-  // Sin regla todavía: la transición pasa si está en la tabla (fuera de alcance).
+// RN-13: para entrar a EN_VALIDACION el caso debe tener una solución vigente:
+// una atención registrada después de la última devolución (#29). La vigencia la
+// calcula el servicio (consulta atenciones y devoluciones) y la pasa aquí.
+export function verificarSolucionRegistrada(tieneAtencionVigente: boolean): void {
+  if (!tieneAtencionVigente) {
+    throw new ConflictError(
+      'SIN_SOLUCION',
+      'El caso no tiene una solución registrada y no puede pasar a En validación',
+    );
+  }
 }
 
 // Única puerta de las reglas de estado: la usan PATCH /casos/:id/estado (#18),
@@ -63,6 +76,7 @@ export function validarTransicion(
   caso: CasoParaTransicionar,
   estadoNuevo: EstadoCaso,
   origen: OrigenTransicion,
+  contexto: ContextoTransicion = {},
 ): void {
   // RN-10: cerrada es un estado final. Se comprueba primero para que pedir un
   // cambio sobre un caso cerrado responda siempre CASO_CERRADO.
@@ -97,6 +111,6 @@ export function validarTransicion(
   }
 
   if (estadoNuevo === 'EN_VALIDACION') {
-    verificarSolucionRegistrada(caso);
+    verificarSolucionRegistrada(contexto.tieneAtencionVigente === true);
   }
 }

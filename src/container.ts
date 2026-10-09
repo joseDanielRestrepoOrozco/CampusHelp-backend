@@ -3,6 +3,7 @@ import { AreasRepository } from './repositories/areas.repository.js';
 import { CategoriasRepository } from './repositories/categorias.repository.js';
 import { HistorialRepository } from './repositories/historial.repository.js';
 import { CasosRepository } from './repositories/casos.repository.js';
+import { AtencionesRepository } from './repositories/atenciones.repository.js';
 import { CategoriasService } from './services/categorias.service.js';
 import { CasosService } from './services/casos.service.js';
 import { CasosController } from './controllers/casos.controller.js';
@@ -17,7 +18,13 @@ const categoriasRepository = new CategoriasRepository();
 const historialRepository = new HistorialRepository();
 const categoriasService = new CategoriasService(categoriasRepository, areasRepository);
 const casosRepository = new CasosRepository(historialRepository);
-const casosService = new CasosService(casosRepository, historialRepository, usuariosRepository);
+const atencionesRepository = new AtencionesRepository(historialRepository);
+const casosService = new CasosService(
+  casosRepository,
+  historialRepository,
+  usuariosRepository,
+  atencionesRepository,
+);
 
 export const container = {
   // El middleware usuarioActual lo necesita para resolver X-Usuario-Id.
@@ -25,5 +32,6 @@ export const container = {
   usuariosController: new UsuariosController(usuariosRepository),
   areasController: new AreasController(areasRepository),
   categoriasController: new CategoriasController(categoriasService),
+  atencionesRepository,
   casosController: new CasosController(casosService),
 };
