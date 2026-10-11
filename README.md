@@ -158,6 +158,7 @@ La API requiere la cabecera `X-Usuario-Id: <id>` en las rutas protegidas. Si fal
 | `GET` | `/api/categorias` | Público (sin auth) | HU-01 | Listar categorías (sin filtros devuelve activas e inactivas; admite `?areaId=&activa=`) |
 | `POST` | `/api/casos` | `SOLICITANTE` | HU-01 | Registrar nuevo incidente o solicitud tecnológica |
 | `GET` | `/api/casos` | Autenticado | HU-02 | Listar casos: solicitantes solo ven sus casos (RN-20); los demás roles pueden filtrar por `solicitanteId`. Orden `fecha_desc`. |
+| `GET` | `/api/indicadores` | `ADMINISTRADOR` | HU-10 | Indicadores del servicio: conteos reales por estado, tipo, prioridad y área, promedios de asignación/resolución y devoluciones. Admite `?desde=&hasta=` (`YYYY-MM-DD`, por `fechaCreacion`). |
 
 ---
 

@@ -9,6 +9,7 @@ import { usuariosRouter } from './routes/usuarios.routes.js';
 import { areasRouter } from './routes/areas.routes.js';
 import { categoriasRouter } from './routes/categorias.routes.js';
 import { casosRouter } from './routes/casos.routes.js';
+import { indicadoresRouter } from './routes/indicadores.routes.js';
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api', usuariosRouter);
 app.use('/api', areasRouter);
 app.use('/api', categoriasRouter);
 app.use('/api', casosRouter);
+app.use('/api', indicadoresRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
