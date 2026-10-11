@@ -104,6 +104,18 @@ export class CasosController {
     response.json(await this.casos.validarCaso(usuario, id, input));
   };
 
+  // GET /api/casos/:id (HU-12)
+  detalle = async (request: Request, response: Response): Promise<void> => {
+    if (!request.usuario) {
+      throw new UnauthorizedError();
+    }
+
+    const { id } = parseWithSchema(casoIdParamsSchema, request.params, 'params');
+    const caso = await this.casos.verDetalle(request.usuario, id);
+
+    response.json(caso);
+  };
+
   // GET /api/casos/:id/historial (HU-08)
   historial = async (request: Request, response: Response): Promise<void> => {
     const usuario = request.usuario!;
