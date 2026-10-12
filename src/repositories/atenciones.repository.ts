@@ -12,6 +12,13 @@ const consultaAtencion = (id: number) => atencionConAgente().where({ id });
 
 export type AtencionConAgente = ResultType<ReturnType<typeof consultaAtencion>>;
 
+// Atenciones de un caso, de la más reciente a la más antigua (decisión 6 de
+// docs/02-requisitos.md: la solución vigente es la más reciente).
+const atencionesDeCaso = (casoId: number) =>
+  atencionConAgente()
+    .where({ casoId })
+    .orderBy([atencion => atencion.fecha.desc(), atencion => atencion.id.desc()]);
+
 // HU-06: un caso puede tener varias atenciones (una nueva por cada devolución);
 // la más reciente es la "vigente" que consumen HU-07 y HU-12.
 export class AtencionesRepository {
@@ -68,9 +75,12 @@ export class AtencionesRepository {
   // HU-06/HU-07/HU-12: la atención más reciente del caso (la que cuenta como
   // solución vigente). El id desempata atenciones del mismo instante.
   async atencionVigente(casoId: number): Promise<AtencionConAgente | null> {
-    return atencionConAgente()
-      .where({ casoId })
-      .orderBy([atencion => atencion.fecha.desc(), atencion => atencion.id.desc()])
-      .first();
+    return atencionesDeCaso(casoId).first();
+  }
+
+  // HU-12: todas las atenciones del caso, de la más reciente a la más antigua.
+  // Mismo orden que atencionVigente: la primera de la lista es la vigente.
+  async listarPorCaso(casoId: number): Promise<AtencionConAgente[]> {
+    return atencionesDeCaso(casoId).all();
   }
 }

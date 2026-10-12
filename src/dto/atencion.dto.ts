@@ -14,6 +14,15 @@ export interface AtencionDto {
 }
 
 export function aAtencionDto(atencion: AtencionConAgente): AtencionDto {
+  const { id, ...resto } = aAtencionDeDetalleDto(atencion);
+  return { id, casoId: atencion.casoId, ...resto };
+}
+
+// Atención dentro del detalle del caso (GET /casos/{id}, HU-12). El contrato la
+// define sin `casoId`: ya va dentro del caso.
+export type AtencionDeDetalleDto = Omit<AtencionDto, 'casoId'>;
+
+export function aAtencionDeDetalleDto(atencion: AtencionConAgente): AtencionDeDetalleDto {
   const { agente } = atencion;
 
   // La FK garantiza el agente; si falta es una inconsistencia de datos, no un
@@ -24,7 +33,6 @@ export function aAtencionDto(atencion: AtencionConAgente): AtencionDto {
 
   return {
     id: atencion.id,
-    casoId: atencion.casoId,
     diagnostico: atencion.diagnostico,
     solucion: atencion.solucion,
     fecha: aFechaIso(atencion.fecha),

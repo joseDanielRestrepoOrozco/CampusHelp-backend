@@ -1,6 +1,6 @@
 import { AppError, ConflictError, ForbiddenError, NotFoundError } from '../errors/app-error.js';
 import { validarTransicion, type EstadoCaso } from '../domain/estados.js';
-import { aCasoDto, type CasoDto } from '../dto/caso.dto.js';
+import { aCasoDetalleDto, aCasoDto, type CasoDetalleDto, type CasoDto } from '../dto/caso.dto.js';
 import { aAtencionDto, type AtencionDto } from '../dto/atencion.dto.js';
 import type {
   CreateCasoInput,
@@ -356,6 +356,24 @@ export class CasosService {
     }
 
     return aCasoDto(actualizado);
+  }
+
+  // HU-12: detalle de un caso con sus atenciones y la solución vigente. AGENTE,
+  // VALIDADOR y ADMINISTRADOR ven cualquiera; SOLICITANTE solo los suyos (RN-20).
+  async verDetalle(usuario: UsuarioAutenticado, casoId: number): Promise<CasoDetalleDto> {
+    const caso = await this.casos.buscarPorId(casoId);
+    if (!caso) {
+      throw new NotFoundError('El caso no existe');
+    }
+
+    // RN-20: se comprueba después del 404, igual que en el historial, para que un
+    // solicitante no use el 403 para saber qué ids existen.
+    if (usuario.rol === 'SOLICITANTE' && caso.solicitanteId !== usuario.id) {
+      throw new ForbiddenError('CASO_AJENO', 'No puedes consultar un caso que no es tuyo');
+    }
+
+    const atenciones = await this.atenciones.listarPorCaso(casoId);
+    return aCasoDetalleDto(caso, atenciones);
   }
 
   // HU-08: historial de un caso. AGENTE, VALIDADOR y ADMINISTRADOR ven el de
