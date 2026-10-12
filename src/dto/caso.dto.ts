@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { AppError } from '../errors/app-error.js';
+import type { AtencionConAgente } from '../repositories/atenciones.repository.js';
 import type { CasoConRelaciones } from '../repositories/casos.repository.js';
+import { aAtencionDeDetalleDto, type AtencionDeDetalleDto } from './atencion.dto.js';
 import { estadoCasoSchema, prioridadSchema, tipoCasoSchema } from '../schemas/caso.schema.js';
 import { aFechaIso } from './fecha.js';
 
@@ -48,5 +50,25 @@ export function aCasoDto(caso: CasoConRelaciones): CasoDto {
     fechaCreacion: aFechaIso(caso.fechaCreacion),
     fechaAsignacion: aFechaIso(caso.fechaAsignacion),
     fechaCierre: aFechaIso(caso.fechaCierre),
+  };
+}
+
+// Detalle del caso (GET /casos/{id}, HU-12): el Caso más sus atenciones, de la
+// más reciente a la más antigua, y la solución vigente (la primera, o null).
+export type CasoDetalleDto = CasoDto & {
+  atenciones: AtencionDeDetalleDto[];
+  solucionVigente: AtencionDeDetalleDto | null;
+};
+
+export function aCasoDetalleDto(
+  caso: CasoConRelaciones,
+  atenciones: AtencionConAgente[],
+): CasoDetalleDto {
+  const atencionesDto = atenciones.map(aAtencionDeDetalleDto);
+
+  return {
+    ...aCasoDto(caso),
+    atenciones: atencionesDto,
+    solucionVigente: atencionesDto[0] ?? null,
   };
 }
