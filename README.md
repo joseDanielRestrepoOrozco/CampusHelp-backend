@@ -153,12 +153,25 @@ La API requiere la cabecera `X-Usuario-Id: <id>` en las rutas protegidas. Si fal
 
 | Método | Ruta | Rol permitido | Historia | Descripción |
 |---|---|---|---|---|
-| `GET` | `/api/usuarios` | Público (sin auth) | Base | Usuarios activos para el selector de pruebas del front |
-| `GET` | `/api/areas` | Público (sin auth) | HU-01 | Listar áreas activas del campus |
-| `GET` | `/api/categorias` | Público (sin auth) | HU-01 | Listar categorías (sin filtros devuelve activas e inactivas; admite `?areaId=&activa=`) |
-| `POST` | `/api/casos` | `SOLICITANTE` | HU-01 | Registrar nuevo incidente o solicitud tecnológica |
-| `GET` | `/api/casos` | Autenticado | HU-02 | Listar casos: solicitantes solo ven sus casos (RN-20); los demás roles pueden filtrar por `solicitanteId`. Orden `fecha_desc`. |
-| `GET` | `/api/indicadores` | `ADMINISTRADOR` | HU-10 | Indicadores del servicio: conteos reales por estado, tipo, prioridad y área, promedios de asignación/resolución y devoluciones. Admite `?desde=&hasta=` (`YYYY-MM-DD`, por `fechaCreacion`). |
+| `GET` | `/api/usuarios` | Público (sin auth) | Base | Usuarios activos para el selector de pruebas del front. Admite `?rol=` |
+| `GET` | `/api/areas` | Público (sin auth) | HU-01 | Áreas activas |
+| `GET` | `/api/categorias` | Público (sin auth) | HU-01, HU-11 | Categorías con `totalCasos` (sin filtros devuelve activas e inactivas; admite `?areaId=&activa=`) |
+| `POST` | `/api/categorias` | `ADMINISTRADOR` | HU-11 | Crear categoría (nombre único por área, RN-22) |
+| `PUT` | `/api/categorias/:id` | `ADMINISTRADOR` | HU-11 | Editar nombre y descripción |
+| `PATCH` | `/api/categorias/:id/activa` | `ADMINISTRADOR` | HU-11 | Activar o desactivar |
+| `DELETE` | `/api/categorias/:id` | `ADMINISTRADOR` | HU-11 | Borrar; si tiene casos responde `409 CATEGORIA_CON_CASOS` (RN-21) |
+| `POST` | `/api/casos` | `SOLICITANTE` | HU-01 | Registrar incidente o solicitud |
+| `GET` | `/api/casos` | Autenticado | HU-02, HU-03, HU-09 | Listar y filtrar casos (`estado`, `tipo`, `prioridad`, `areaId`, `categoriaId`, `q`, `agenteId`, `sinAgente`, `abiertos`, `orden`). El solicitante solo ve los suyos (RN-20) |
+| `GET` | `/api/casos/:id` | Autenticado | HU-12 | Detalle con `atenciones` y `solucionVigente`. Un solicitante solo los suyos (`403 CASO_AJENO`) |
+| `PATCH` | `/api/casos/:id/clasificacion` | `AGENTE` | HU-05 | Corregir tipo, categoría o prioridad en Pendiente o En análisis (RN-08) |
+| `PATCH` | `/api/casos/:id/asignar` | `AGENTE` | HU-04 | Asignar o reasignar agente en Pendiente o En análisis (RN-18, RN-19) |
+| `PATCH` | `/api/casos/:id/estado` | `AGENTE` | HU-05 | Cambio de estado manual; la tabla de transiciones vive en `src/domain/estados.ts` |
+| `POST` | `/api/casos/:id/atencion` | Agente asignado | HU-06 | Registrar diagnóstico y solución con el caso En atención (RN-12) |
+| `POST` | `/api/casos/:id/validacion` | `VALIDADOR` | HU-07 | Aprobar (cierra) o devolver con comentario (RN-14 a RN-16) |
+| `GET` | `/api/casos/:id/historial` | Autenticado | HU-08 | Eventos del caso. Un solicitante solo los de sus casos |
+| `GET` | `/api/indicadores` | `ADMINISTRADOR` | HU-10 | Conteos por estado, tipo, prioridad y área, promedios de asignación y resolución y devoluciones. Admite `?desde=&hasta=` (`YYYY-MM-DD`, por `fechaCreacion`) |
+
+Cuerpos, respuestas y códigos de error de cada ruta: `docs/03-api.md` del repositorio `sw3-frontend`.
 
 ---
 
@@ -242,13 +255,7 @@ Si ya tienes una instancia local de PostgreSQL corriendo en el puerto 5432 o un 
 
 ---
 
-| Método | Ruta | Historia |
-|---|---|---|
-| GET | `/api/usuarios` | HU-01 (selector de usuario de prueba, solo activos) |
-| GET | `/api/areas` | HU-01 |
-| GET | `/api/categorias?areaId=&activa=` | HU-01 |
-| POST | `/api/casos` | HU-01 |
-| PATCH | `/api/casos/:id/estado` | HU-05 (solo AGENTE; la tabla de transiciones vive en `src/domain/estados.ts`) |
+## Scripts
 
 | Script | Descripción |
 |---|---|
@@ -264,9 +271,13 @@ Si ya tienes una instancia local de PostgreSQL corriendo en el puerto 5432 o un 
 
 ---
 
+## Estructura
+
+Cada entidad tiene sus propios archivos en cada capa (`usuarios`, `areas`, `categorias`, `casos`…):
+
 - `src/routes` — rutas HTTP de cada entidad.
 - `src/controllers` — leen la petición, validan con el esquema y responden.
-- `src/services` — reglas de negocio. Solo existen cuando hay reglas (por ahora, casos).
+- `src/services` — reglas de negocio. Solo existen cuando hay reglas: casos, categorías e indicadores.
 - `src/repositories` — acceso a datos con Prisma ORM. Un repositorio por tabla.
 - `src/dto` — forma exacta en que cada recurso sale en el JSON, según el contrato.
 - `src/schemas` — validación de entradas con Zod. Los validadores compartidos están en `query.schema.ts` (query) y `param.schema.ts` (`:id` de la ruta).
