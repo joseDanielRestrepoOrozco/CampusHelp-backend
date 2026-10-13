@@ -24,6 +24,14 @@ proyecto/
 └── sw3-frontend/          # Repositorio Frontend en React
 ```
 
+```bash
+git clone https://github.com/joseDanielRestrepoOrozco/CampusHelp-backend.git
+git clone https://github.com/CristianGarcia21/sw3-frontend.git
+```
+
+> [!NOTE]
+> En Windows, antes de clonar el backend ejecuta `git config --global core.longpaths true`. La carpeta `.agents/` tiene rutas de más de 260 caracteres y sin esa opción el clon termina con `Filename too long`.
+
 ### Paso 1: Iniciar la base de datos PostgreSQL
 
 En la raíz de `CampusHelp-backend`, inicia el contenedor de PostgreSQL con Docker Compose:
