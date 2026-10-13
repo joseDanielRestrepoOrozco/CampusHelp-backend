@@ -5,7 +5,11 @@ import rateLimit from 'express-rate-limit';
 import { env } from './config/env.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { notFoundHandler } from './middleware/not-found-handler.js';
-import { userRouter } from './routes/user.routes.js';
+import { usuariosRouter } from './routes/usuarios.routes.js';
+import { areasRouter } from './routes/areas.routes.js';
+import { categoriasRouter } from './routes/categorias.routes.js';
+import { casosRouter } from './routes/casos.routes.js';
+import { indicadoresRouter } from './routes/indicadores.routes.js';
 
 const app = express();
 
@@ -22,12 +26,21 @@ app.use(
     limit: 300,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'Demasiadas solicitudes. Inténtalo de nuevo más tarde.' },
+    message: {
+      error: 'VALIDACION',
+      mensaje: 'Demasiadas solicitudes. Inténtalo de nuevo más tarde.',
+      detalles: [],
+    },
   }),
 );
 app.use(express.json({ limit: '16kb' }));
 
-app.use('/users', userRouter);
+// Todas las rutas del contrato (docs/03-api.md) viven bajo /api.
+app.use('/api', usuariosRouter);
+app.use('/api', areasRouter);
+app.use('/api', categoriasRouter);
+app.use('/api', casosRouter);
+app.use('/api', indicadoresRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 

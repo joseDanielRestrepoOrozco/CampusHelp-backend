@@ -1,0 +1,80 @@
+[
+  {
+    "id": "index.caso.caso_prioridad_idx_86f496ef",
+    "label": "Create index \"caso_prioridad_idx_86f496ef\" on \"caso\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "caso_prioridad_idx_86f496ef",
+        "table": "caso"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"caso_prioridad_idx_86f496ef\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"caso_prioridad_idx_86f496ef\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"caso_prioridad_idx_86f496ef\"",
+        "sql": "CREATE INDEX \"caso_prioridad_idx_86f496ef\" ON \"public\".\"caso\" (\"prioridad\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"caso_prioridad_idx_86f496ef\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"caso_prioridad_idx_86f496ef\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.caso.caso_tipo_idx_2cc2d1f4",
+    "label": "Create index \"caso_tipo_idx_2cc2d1f4\" on \"caso\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "caso_tipo_idx_2cc2d1f4",
+        "table": "caso"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"caso_tipo_idx_2cc2d1f4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"caso_tipo_idx_2cc2d1f4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"caso_tipo_idx_2cc2d1f4\"",
+        "sql": "CREATE INDEX \"caso_tipo_idx_2cc2d1f4\" ON \"public\".\"caso\" (\"tipo\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"caso_tipo_idx_2cc2d1f4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"caso_tipo_idx_2cc2d1f4\""
+        ]
+      }
+    ]
+  }
+]

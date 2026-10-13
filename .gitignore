@@ -217,4 +217,7 @@ $RECYCLE.BIN/
 
 dist/
 
+# Temporal del script de pruebas de HU-06 (scripts/test-hu06-atencion.sh)
+.hu06-devolucion-*.mts
+
 # End of https://www.toptal.com/developers/gitignore/api/node,macos,linux,windows
